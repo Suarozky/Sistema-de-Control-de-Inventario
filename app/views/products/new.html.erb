@@ -1,0 +1,20 @@
+<h1>Nuevo Producto</h1>
+
+<%= form_with(model: @product, local: true) do |f| %>
+  <div>
+    <%= f.label :model, "Modelo" %>
+    <%= f.select :model, @models.map { |m| [m.name, m.name] }, { prompt: "Selecciona un modelo" } %>
+  </div>
+
+  <div>
+    <%= f.label :brand, "Marca" %>
+    <%= f.select :brand, @brands.map { |b| [b.name, b.name] }, { prompt: "Selecciona una marca" } %>
+  </div>
+
+  <div>
+    <%= f.label :entry_date, "Fecha de ingreso" %>
+    <%= f.date_field :entry_date %>
+  </div>
+
+  <%= f.submit "Crear Producto" %>
+<% end %>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Iniciar Sesión</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input[type="text"] { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+    .btn { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+    .btn:hover { background-color: #0056b3; }
+    .alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+    .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .links { text-align: center; margin-top: 20px; }
+    .links a { color: #007bff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>Iniciar Sesión</h1>
+
+  <% if flash[:alert] %>
+    <div class="alert alert-danger">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
+  <%= form_with url: login_path, method: :post, local: true do |form| %>
+    <div class="form-group">
+      <%= form.label :name, "Nombre:" %>
+      <%= form.text_field :name, required: true %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :lastname, "Apellido:" %>
+      <%= form.text_field :lastname, required: true %>
+    </div>
+
+    <div class="form-group">
+      <%= form.submit "Iniciar Sesión", class: "btn" %>
+    </div>
+  <% end %>
+
+  <div class="links">
+  </div>
+</body>
+</html>

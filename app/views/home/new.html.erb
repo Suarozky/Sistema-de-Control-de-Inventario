@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .container { display: flex; height: 100vh; }
+    .sidebar {
+      width: 200px;
+      background-color: #ffffff;
+      border-right: 1px solid #ccc;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .sidebar .profile {
+      width: 50px;
+      height: 50px;
+      background-color: #ddd;
+      border-radius: 50%;
+      margin-bottom: 20px;
+    }
+    .sidebar form {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .sidebar button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background-color: #e0e0e0;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+.search-btn:hover {
+  background-color: #ccc;
+}
+
+    .main { flex: 1; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+    .topbar {
+      height: 50px;
+      background-color: #ffffff;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+    .topbar input { flex: 1; margin-right: 10px; padding: 5px; }
+    .content { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+    .content .row {
+      height: 40px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="profile"></div>
+
+      <!-- Botón para importar Brands -->
+      <%= form_with url: import_brands_path, local: true, multipart: true do |f| %>
+        <%= f.file_field :file, required: true %>
+        <button type="submit">Importar Brands</button>
+      <% end %>
+
+      <!-- Botón para importar Models -->
+      <%= form_with url: import_models_path, local: true, multipart: true do |f| %>
+        <%= f.file_field :file, required: true %>
+        <button type="submit">Importar Models</button>
+      <% end %>
+    </div>
+
+    <div class="main">
+     <div class="topbar">
+  <input type="text" placeholder="Buscar...">
+  <%= link_to "🔍", new_product_path, class: "search-btn" %>
+</div>
+
+      <div class="content">
+        <div class="row">Dashboard</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
