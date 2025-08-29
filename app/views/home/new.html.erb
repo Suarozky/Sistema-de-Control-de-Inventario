@@ -5,78 +5,253 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f5f5f5;
     }
-    .container { display: flex; height: 100vh; }
+
+    .container { 
+      display: flex; 
+      height: 100vh; 
+    }
+
+    /* Sidebar mejorado */
     .sidebar {
-      width: 200px;
+      width: 220px;
       background-color: #ffffff;
-      border-right: 1px solid #ccc;
+      border-right: 1px solid #e0e0e0;
       padding: 20px;
-      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.02);
     }
+
     .sidebar .profile {
       width: 50px;
       height: 50px;
-      background-color: #ddd;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-radius: 50%;
       margin-bottom: 20px;
     }
+
     .sidebar form {
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
+
+    .sidebar input[type="file"] {
+      padding: 8px;
+      border: 2px dashed #ddd;
+      border-radius: 6px;
+      background: #f9f9f9;
+      font-size: 12px;
+    }
+
     .sidebar button {
       width: 100%;
       padding: 10px;
       border: none;
-      background-color: #e0e0e0;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,123,255,0.3);
     }
 
     .search-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  text-decoration: none;
-  color: black;
-  cursor: pointer;
-}
-.search-btn:hover {
-  background-color: #ccc;
-}
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      background-color: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #007bff;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
 
-    .main { flex: 1; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+    .search-btn:hover { 
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    /* Main area */
+    .main { 
+      flex: 1; 
+      padding: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      overflow: hidden;
+    }
+
     .topbar {
-      height: 50px;
+      height: 60px;
       background-color: #ffffff;
-      border-bottom: 1px solid #ccc;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 10px;
-      box-sizing: border-box;
+      padding: 0 20px;
       margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
-    .topbar input { flex: 1; margin-right: 10px; padding: 5px; }
-    .content { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-    .content .row {
+
+    .topbar input { 
+      flex: 1; 
+      margin-right: 15px;
+      padding: 10px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .topbar input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    /* Tabs mejorados */
+    .tabs { 
+      display: inline-flex;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      font-size: 14px;
+      color: #666;
+      margin-right: 4px;
+    }
+
+    .tab-btn:last-child {
+      margin-right: 0;
+    }
+
+    .tab-btn.active { 
+      background-color: #007bff; 
+      color: white; 
+      box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+    }
+
+    .tab-btn:hover:not(.active) { 
+      background-color: rgba(0,123,255,0.1);
+      color: #007bff;
+    }
+
+    .tab-btn.active:hover { 
+      background-color: #0056b3; 
+    }
+    
+    /* Contenido de tabs */
+    .tab-content { 
+      display: none; 
+      flex-direction: column; 
+      gap: 10px; 
+      overflow-y: auto; 
+      flex: 1;
+      padding-right: 8px;
+    }
+
+    .tab-content.active { 
+      display: flex;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    .tab-content .row {
       height: 40px;
       background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
       padding: 10px;
-      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .tab-content .row:hover {
+      border-color: #007bff;
+      box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+    }
+
+    /* Scrollbar personalizado */
+    .tab-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .tab-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .tab-content::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    .tab-content::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 16px;
+      }
+      
+      .sidebar .profile {
+        display: none;
+      }
+
+      .main {
+        padding: 15px;
+      }
     }
   </style>
 </head>
@@ -85,29 +260,253 @@
     <div class="sidebar">
       <div class="profile"></div>
 
-      <!-- Botón para importar Brands -->
+      <!-- Mantener exactamente tus formularios de Rails -->
       <%= form_with url: import_brands_path, local: true, multipart: true do |f| %>
         <%= f.file_field :file, required: true %>
         <button type="submit">Importar Brands</button>
       <% end %>
 
-      <!-- Botón para importar Models -->
       <%= form_with url: import_models_path, local: true, multipart: true do |f| %>
         <%= f.file_field :file, required: true %>
         <button type="submit">Importar Models</button>
       <% end %>
+
+
+      <%= form_with url: import_users_path, local: true, multipart: true do |f| %>
+        <%= f.file_field :file, required: true %>
+        <button type="submit">Importar Users</button>
+      <% end %>
+
+        <%= form_with url: import_products_path, local: true, multipart: true do |f| %>
+            <%= f.file_field :file, required: true %>
+            <button type="submit">Importar Products</button>
+          <% end %>
+
+<!-- Reemplaza tu form de exportación por un link que descargue -->
+<div style="margin-top: 20px; width: 100%;">
+  <label for="export-type">Selecciona tipo a exportar</label>
+  <select id="export-type" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+    <option value="user">Usuarios</option>
+    <option value="brand">Brands</option>
+    <option value="model">Models</option>
+    <option value="product">Productos</option>
+  </select>
+  <button id="download-btn" style="margin-top: 10px; padding: 10px; border-radius: 6px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+    Descargar
+  </button>
+</div>
+
+
     </div>
 
     <div class="main">
-     <div class="topbar">
-  <input type="text" placeholder="Buscar...">
-  <%= link_to "🔍", new_product_path, class: "search-btn" %>
-</div>
+      <div class="topbar">
+        <input type="text" placeholder="Buscar...">
+        <!-- Mantener tu lupa dinámica exactamente igual -->
+        <%= link_to "🔍", new_product_path, class: "search-btn", id: "search-link" %>
+      </div>
 
-      <div class="content">
-        <div class="row">Dashboard</div>
+      <!-- Tabs mejorados -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="products">Productos</button>
+        <button class="tab-btn" data-tab="users">Usuarios</button>
+      </div>
+
+      <!-- Mantener exactamente tu contenido -->
+      <div id="products" class="tab-content active">
+        <div class="row">Listado de Productos</div>
+        <%= render partial: "shared/cardProduct", collection: @products, as: :product %>
+      </div>
+
+      <div id="users" class="tab-content">
+        <div class="row">Listado de Usuarios</div>
+        <%= render partial: "shared/cardUser", collection: @users, as: :user %>
       </div>
     </div>
   </div>
+
+  <script>
+    class TabManager {
+      constructor() {
+        this.activeTab = 'products';
+        this.searchUrls = {
+          products: "<%= new_product_path %>",
+          users: "<%= new_user_path %>"
+        };
+        this.init();
+      }
+
+      init() {
+        this.bindEvents();
+        this.restoreActiveTab();
+        this.updateSearchLink();
+      }
+
+      bindEvents() {
+        // Event delegation más eficiente
+        const tabsContainer = document.querySelector('.tabs');
+        if (tabsContainer) {
+          tabsContainer.addEventListener('click', this.handleTabClick.bind(this));
+        }
+
+        // Prevención de errores si no existen elementos
+        this.addSafeEventListener('beforeunload', window, () => {
+          // Opcional: limpiar localStorage
+          // localStorage.removeItem('activeTab');
+        });
+      }
+
+      handleTabClick(e) {
+        if (!e.target.classList.contains('tab-btn')) return;
+        
+        e.preventDefault();
+        const targetTab = e.target.dataset.tab;
+        
+        if (targetTab && targetTab !== this.activeTab) {
+          this.switchTab(targetTab);
+        }
+      }
+
+      switchTab(targetTab) {
+        const targetButton = document.querySelector(`[data-tab="${targetTab}"]`);
+        const targetContent = document.getElementById(targetTab);
+        
+        if (!targetButton || !targetContent) {
+          console.warn(`Tab "${targetTab}" no encontrado`);
+          return;
+        }
+
+        // Desactivar elementos actuales
+        this.deactivateAll();
+
+        // Activar nuevos elementos
+        targetButton.classList.add('active');
+        targetContent.classList.add('active');
+        
+        // Actualizar estado
+        this.activeTab = targetTab;
+        this.saveActiveTab();
+        this.updateSearchLink();
+
+        // Evento personalizado para extensibilidad
+        this.dispatchTabChangeEvent(targetTab);
+      }
+
+      deactivateAll() {
+        document.querySelectorAll('.tab-btn.active, .tab-content.active')
+          .forEach(el => el.classList.remove('active'));
+      }
+
+      updateSearchLink() {
+        const searchLink = document.getElementById('search-link');
+        if (searchLink && this.searchUrls[this.activeTab]) {
+          searchLink.href = this.searchUrls[this.activeTab];
+        }
+      }
+
+      saveActiveTab() {
+        try {
+          localStorage.setItem('activeTab', this.activeTab);
+        } catch (e) {
+          // Manejo silencioso si localStorage no está disponible
+        }
+      }
+
+      restoreActiveTab() {
+        try {
+          const savedTab = localStorage.getItem('activeTab');
+          if (savedTab && document.getElementById(savedTab)) {
+            this.switchTab(savedTab);
+            return;
+          }
+        } catch (e) {
+          // Manejo silencioso de errores
+        }
+        
+        // Tab por defecto
+        this.switchTab('products');
+      }
+
+      dispatchTabChangeEvent(tabName) {
+        try {
+          const event = new CustomEvent('tabChanged', {
+            detail: { activeTab: tabName },
+            bubbles: true
+          });
+          document.dispatchEvent(event);
+        } catch (e) {
+          // Fallback para navegadores antiguos
+        }
+      }
+
+      addSafeEventListener(event, element, handler) {
+        if (element && typeof element.addEventListener === 'function') {
+          element.addEventListener(event, handler);
+        }
+      }
+    }
+
+    // Inicialización segura
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        window.tabManager = new TabManager();
+      } catch (e) {
+        console.error('Error al inicializar TabManager:', e);
+        // Fallback básico
+        initBasicTabs();
+      }
+    });
+
+    // Fallback para compatibilidad
+    function initBasicTabs() {
+      const buttons = document.querySelectorAll('.tab-btn');
+      const contents = document.querySelectorAll('.tab-content');
+      const searchLink = document.getElementById('search-link');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const targetTab = this.dataset.tab;
+          
+          // Limpiar estados
+          buttons.forEach(b => b.classList.remove('active'));
+          contents.forEach(c => c.classList.remove('active'));
+          
+          // Activar seleccionados
+          this.classList.add('active');
+          const targetContent = document.getElementById(targetTab);
+          if (targetContent) {
+            targetContent.classList.add('active');
+          }
+          
+          // Actualizar link de búsqueda
+          if (searchLink) {
+            const urls = {
+              products: "<%= new_product_path %>",
+              users: "<%= new_user_path %>"
+            };
+            if (urls[targetTab]) {
+              searchLink.href = urls[targetTab];
+            }
+          }
+        });
+      });
+    }
+  </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtn = document.querySelector('#download-btn');
+    const exportSelect = document.querySelector('#export-type');
+
+    if (downloadBtn && exportSelect) {
+      downloadBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const type = exportSelect.value;
+        const url = `/home/export?type=${type}`; // ajusta según tu ruta Rails
+        window.location.href = url; // fuerza la descarga
+      });
+    }
+  });
+</script>
+
 </body>
 </html>

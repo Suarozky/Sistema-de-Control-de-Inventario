@@ -1,0 +1,10 @@
+<div class="card" style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+  <h3>Registro <%= user.id %></h3>
+  <ul>
+    <li><strong>Nombre:</strong> <%= user.name %></li>
+    <li><strong>Apellido:</strong> <%= user.lastname %></li>
+    <li>
+      <%= link_to "Registro de productos", my_products_user_path(user), class: "btn" %>
+    </li>
+  </ul>
+</div>

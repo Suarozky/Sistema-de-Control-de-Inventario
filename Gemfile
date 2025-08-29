@@ -18,6 +18,12 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 gem "roo", "~> 2.10"
+# Gemfile
+gem 'caxlsx'
+
+
+
+
 
 
 

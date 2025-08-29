@@ -1,70 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Registro</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      max-width: 400px; 
-      margin: 50px auto; 
-      padding: 20px; 
-      background-color: #f5f5f5;
-    }
-    h1 { text-align: center; margin-bottom: 30px; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; }
-    input[type="text"] { 
-      width: 100%; 
-      padding: 8px; 
-      border: 1px solid #ddd; 
-      border-radius: 4px; 
-      box-sizing: border-box;
-    }
-    .btn { 
-      background-color: #007bff; 
-      color: white; 
-      padding: 10px 20px; 
-      border: none; 
-      border-radius: 4px; 
-      cursor: pointer; 
-      width: 100%; 
-      font-size: 16px;
-    }
-    .btn:hover { background-color: #0056b3; }
-    .alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
-    .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .links { text-align: center; margin-top: 20px; }
-    .links a { color: #007bff; text-decoration: none; }
-  </style>
-</head>
-<body>
-  <h1>Registro</h1>
+<h1>Registrar Usuario</h1>
 
-  <% if flash[:alert] %>
-    <div class="alert alert-danger">
-      <%= flash[:alert] %>
-    </div>
-  <% end %>
-
-  <%= form_with(model: @user, url: "/register", local: true) do |f| %>
-    <div class="form-group">
-      <%= f.label :name, "Nombre" %>
-      <%= f.text_field :name, required: true %>
-    </div>
-
-    <div class="form-group">
-      <%= f.label :lastname, "Apellido" %>
-      <%= f.text_field :lastname, required: true %>
-    </div>
-
-    <div class="form-group">
-      <%= f.submit "Registrar", class: "btn" %>
-    </div>
-  <% end %>
-
-  <div class="links">
-    <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
+<%= form_with model: @user, local: true do |f| %>
+  <div>
+    <%= f.label :name, "Nombre" %>
+    <%= f.text_field :name %>
   </div>
-</body>
-</html>
+
+  <div>
+    <%= f.label :lastname, "Apellido" %>
+    <%= f.text_field :lastname %>
+  </div>
+
+  <div>
+    <%= f.submit "Crear Usuario" %>
+  </div>
+<% end %>

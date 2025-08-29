@@ -1,0 +1,97 @@
+<div class="card" style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;" data-product-id="<%= product.id %>">
+  <h3>Registro <%= product.id %></h3>
+  <ul>
+    <li><strong>Modelo:</strong> 
+      <span class="display-field"><%= product.model %></span>
+      <select class="edit-field" style="display:none;">
+        <% @models.each do |m| %>
+          <option value="<%= m.name %>" <%= "selected" if m.name == product.model %>><%= m.name %></option>
+        <% end %>
+      </select>
+    </li>
+    <li><strong>Marca:</strong> 
+      <span class="display-field"><%= product.brand %></span>
+      <select class="edit-field" style="display:none;">
+        <% @brands.each do |b| %>
+          <option value="<%= b.name %>" <%= "selected" if b.name == product.brand %>><%= b.name %></option>
+        <% end %>
+      </select>
+    </li>
+    <li><strong>Owner:</strong> 
+      <span class="display-field"><%= product.owner&.name %> <%= product.owner&.lastname %></span>
+      <select class="edit-field" style="display:none;">
+        <% @users.each do |u| %>
+          <option value="<%= u.id %>" <%= "selected" if u.id == product.ownerid %>><%= u.name %> <%= u.lastname %></option>
+        <% end %>
+      </select>
+    </li>
+    <li><strong>Fecha de Ingreso:</strong> 
+      <span class="display-field"><%= product.entry_date.strftime("%d/%m/%Y") if product.entry_date %></span>
+      <input type="date" class="edit-field" style="display:none;" value="<%= product.entry_date %>">
+    </li>
+  </ul>
+
+  <button class="edit-btn">Editar</button>
+  <button class="history-btn" onclick="window.location.href='<%= transactions_history_product_path(product) %>'">
+  Registro de dueño
+</button>
+
+  <button class="save-btn" style="display:none;">Guardar</button>
+</div>
+<script>
+document.querySelectorAll('.card').forEach(card => {
+  const editBtn = card.querySelector('.edit-btn');
+  const saveBtn = card.querySelector('.save-btn');
+
+  editBtn.addEventListener('click', () => {
+    card.querySelectorAll('.display-field').forEach(el => el.style.display = 'none');
+    card.querySelectorAll('.edit-field').forEach(el => el.style.display = 'inline');
+    editBtn.style.display = 'none';
+    saveBtn.style.display = 'inline';
+  });
+
+  saveBtn.addEventListener('click', async () => {
+  const productId = card.dataset.productId;
+
+  const selects = card.querySelectorAll('select.edit-field');
+  const inputDate = card.querySelector('input.edit-field');
+
+  // Usar valor actual si el usuario no cambia nada
+  const model = selects[0].value || card.querySelectorAll('.display-field')[0].textContent;
+  const brand = selects[1].value || card.querySelectorAll('.display-field')[1].textContent;
+  const ownerId = selects[2].value || card.dataset.ownerid; // guardamos ownerid anterior en data-attribute
+  const entryDate = inputDate.value || card.querySelectorAll('.display-field')[3].textContent;
+
+  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  const response = await fetch(`/products/${productId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': token
+    },
+    body: JSON.stringify({ product: { model, brand, ownerid: ownerId, entry_date: entryDate } })
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+
+    // Actualizar display
+    const displayFields = card.querySelectorAll('.display-field');
+    displayFields[0].textContent = data.model;
+    displayFields[1].textContent = data.brand;
+    displayFields[2].textContent = data.owner_name;
+    displayFields[3].textContent = data.entry_date;
+
+    card.querySelectorAll('.display-field').forEach(el => el.style.display = 'inline');
+    card.querySelectorAll('.edit-field').forEach(el => el.style.display = 'none');
+    editBtn.style.display = 'inline';
+    saveBtn.style.display = 'none';
+  } else {
+    alert("Error al actualizar el producto");
+  }
+});
+
+
+});
+</script>

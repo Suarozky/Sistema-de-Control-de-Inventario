@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Transacciones</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 400;
+        }
+
+        .product-info {
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transactions-table th, .transactions-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .transactions-table thead {
+            background-color: #e6f0fa;
+        }
+
+        .transactions-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .current-owner {
+            font-weight: 600;
+            background-color: #d0ebff;
+        }
+
+        .current-badge {
+            display: inline-block;
+            background-color: #4a90e2;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4a90e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #357ABD;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Historial de Propietarios</h1>
+            <div class="product-info">
+                <strong>Producto ID: <%= @product.id %></strong>
+                <% if @product.model.present? %>
+                    <br><%= @product.brand %> <%= @product.model %>
+                <% end %>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number"><%= @transactions.count %></div>
+                <div class="stat-label">Transacciones</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><%= @transactions.map(&:ownerid).uniq.count %></div>
+                <div class="stat-label">Propietarios</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">
+                    <% if @transactions.any? %>
+                        <%= ((Time.current - @transactions.last.date) / 1.day).round %>
+                    <% else %>
+                        0
+                    <% end %>
+                </div>
+                <div class="stat-label">Días con propietario actual</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <% if @transactions.any? %>
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Propietario</th>
+                            <th>Fecha de Asignación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @transactions.each_with_index do |transaction, index| %>
+                            <% owner = User.find_by(id: transaction.ownerid) %>
+                            <tr class="<%= 'current-owner' if index == 0 %>">
+                                <td><%= index + 1 %></td>
+                                <td>
+                                    <%= owner&.name %> <%= owner&.lastname %>
+                                    <% if index == 0 %>
+                                        <span class="current-badge">Actual</span>
+                                    <% end %>
+                                </td>
+                                <td>
+                                    <%= transaction.date.strftime("%d/%m/%Y a las %H:%M") %>
+                                    <% if index == 0 %>
+                                        <br><small>Hace <%= time_ago_in_words(transaction.date) %></small>
+                                    <% end %>
+                                </td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            <% else %>
+                <div class="empty-state">
+                    <h3>No hay transacciones registradas</h3>
+                    <p>Este producto aún no ha sido asignado a ningún propietario.</p>
+                </div>
+            <% end %>
+        </div>
+
+        <div class="footer">
+            <%= link_to "Volver al inicio", home_path, class: "back-button" %>
+        </div>
+    </div>
+</body>
+</html>
