@@ -1,24 +1,18 @@
 # app/controllers/home_controller.rb
 class HomeController < ApplicationController
-  def new
-  @products = Product.all
-  @users = User.all
-  @brands = Brand.all
-  @models = Model.all
-end
-# app/controllers/home_controller.rb
-def export
-  type = params[:type]
-  package = ExportService.new(type).call
-
-  # Genera un nombre de archivo con timestamp
-  filename = "#{type.pluralize}_#{Time.current.strftime('%Y%m%d%H%M%S')}.xlsx"
-
-  # Forzar descarga
-  send_data package.to_stream.read,
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            filename: filename
-end
-
-
+def new
+    # Conteos principales para el dashboard
+    @total_users = User.count
+    @total_products = Product.count
+    @total_transactions = Transaction.count
+    
+    # Transacciones recientes con includes para evitar N+1 queries
+    @recent_transactions = Transaction.includes(:owner, :product)
+                                    .order(date: :desc)
+                                    .limit(10)
+    
+    # Datos adicionales que podrías necesitar
+    @transactions_today = Transaction.where(date: Date.current.beginning_of_day..Date.current.end_of_day).count
+    @transactions_this_month = Transaction.where(date: Date.current.beginning_of_month..Date.current.end_of_month).count
+  end
 end

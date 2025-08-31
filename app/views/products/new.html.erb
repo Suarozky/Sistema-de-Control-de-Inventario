@@ -1,20 +1,54 @@
-<h1>Nuevo Producto</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Producto</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Nuevo Producto</h1>
+        
+        <form method="POST" action="/products" class="space-y-4">
+            <!-- CSRF Token (en Rails se agrega automáticamente) -->
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            
+            <div class="space-y-2">
+                <label for="product_model" class="block text-sm font-medium text-gray-700">Modelo</label>
+                <select id="product_model" name="product[model]"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    <option value="">Selecciona un modelo</option>
+                    <% @models.each do |model| %>
+                        <option value="<%= model.name %>"><%= model.name %></option>
+                    <% end %>
+                </select>
+            </div>
 
-<%= form_with(model: @product, local: true) do |f| %>
-  <div>
-    <%= f.label :model, "Modelo" %>
-    <%= f.select :model, @models.map { |m| [m.name, m.name] }, { prompt: "Selecciona un modelo" } %>
-  </div>
+            <div class="space-y-2">
+                <label for="product_brand" class="block text-sm font-medium text-gray-700">Marca</label>
+                <select id="product_brand" name="product[brand]"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    <option value="">Selecciona una marca</option>
+                    <% @brands.each do |brand| %>
+                        <option value="<%= brand.name %>"><%= brand.name %></option>
+                    <% end %>
+                </select>
+            </div>
 
-  <div>
-    <%= f.label :brand, "Marca" %>
-    <%= f.select :brand, @brands.map { |b| [b.name, b.name] }, { prompt: "Selecciona una marca" } %>
-  </div>
+            <div class="space-y-2">
+                <label for="product_entry_date" class="block text-sm font-medium text-gray-700">Fecha de ingreso</label>
+                <input type="date" id="product_entry_date" name="product[entry_date]"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+            </div>
 
-  <div>
-    <%= f.label :entry_date, "Fecha de ingreso" %>
-    <%= f.date_field :entry_date %>
-  </div>
-
-  <%= f.submit "Crear Producto" %>
-<% end %>
+            <div class="pt-4 flex justify-center">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Crear Producto
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -4,197 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de Transacciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-
-        .header {
-            background-color: #4a90e2;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 400;
-        }
-
-        .product-info {
-            margin-top: 10px;
-            font-weight: 500;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            background: #f9f9f9;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 20px;
-            font-weight: bold;
-            color: #4a90e2;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #555;
-            text-transform: uppercase;
-        }
-
-        .transactions-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .transactions-table th, .transactions-table td {
-            padding: 15px;
-            text-align: left;
-        }
-
-        .transactions-table thead {
-            background-color: #e6f0fa;
-        }
-
-        .transactions-table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
         .current-owner {
-            font-weight: 600;
-            background-color: #d0ebff;
-        }
-
-        .current-badge {
-            display: inline-block;
-            background-color: #4a90e2;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            margin-left: 5px;
-        }
-
-        .footer {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #4a90e2;
-            color: white;
-            text-decoration: none;
-            border-radius: 20px;
-            transition: background 0.3s;
-        }
-
-        .back-button:hover {
-            background-color: #357ABD;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #777;
+            background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Historial de Propietarios</h1>
-            <div class="product-info">
-                <strong>Producto ID: <%= @product.id %></strong>
-                <% if @product.model.present? %>
-                    <br><%= @product.brand %> <%= @product.model %>
-                <% end %>
-            </div>
-        </div>
-
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number"><%= @transactions.count %></div>
-                <div class="stat-label">Transacciones</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number"><%= @transactions.map(&:ownerid).uniq.count %></div>
-                <div class="stat-label">Propietarios</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">
-                    <% if @transactions.any? %>
-                        <%= ((Time.current - @transactions.last.date) / 1.day).round %>
-                    <% else %>
-                        0
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto p-4">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+            <div class="p-6 border-b border-gray-100">
+                <h1 class="text-2xl font-semibold text-gray-900 mb-2">Historial de Propietarios</h1>
+                <div class="text-sm text-gray-600">
+                    <span class="font-medium">Producto ID: <%= @product.id %></span>
+                    <% if @product.model.present? %>
+                        <span class="ml-4 text-gray-700"><%= @product.brand %> <%= @product.model %></span>
                     <% end %>
                 </div>
-                <div class="stat-label">Días con propietario actual</div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600"><%= @transactions.count %></div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Transacciones</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600"><%= @transactions.map(&:ownerid).uniq.count %></div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Propietarios</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600">
+                            <% if @transactions.any? %>
+                                <%= ((Time.current - @transactions.last.date) / 1.day).round %>
+                            <% else %>
+                                0
+                            <% end %>
+                        </div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Días con propietario actual</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="content">
+        <!-- Transactions Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
             <% if @transactions.any? %>
-                <table class="transactions-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Propietario</th>
-                            <th>Fecha de Asignación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% @transactions.each_with_index do |transaction, index| %>
-                            <% owner = User.find_by(id: transaction.ownerid) %>
-                            <tr class="<%= 'current-owner' if index == 0 %>">
-                                <td><%= index + 1 %></td>
-                                <td>
-                                    <%= owner&.name %> <%= owner&.lastname %>
-                                    <% if index == 0 %>
-                                        <span class="current-badge">Actual</span>
-                                    <% end %>
-                                </td>
-                                <td>
-                                    <%= transaction.date.strftime("%d/%m/%Y a las %H:%M") %>
-                                    <% if index == 0 %>
-                                        <br><small>Hace <%= time_ago_in_words(transaction.date) %></small>
-                                    <% end %>
-                                </td>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-100">
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Propietario</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Asignación</th>
                             </tr>
-                        <% end %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% @transactions.each_with_index do |transaction, index| %>
+                                <% owner = User.find_by(id: transaction.ownerid) %>
+                                <tr class="<%= 'current-owner' if index == 0 %> <%= index % 2 == 0 ? 'bg-white' : 'bg-gray-50' %>">
+                                    <td class="px-6 py-4 text-sm text-gray-900"><%= index + 1 %></td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <div class="flex items-center">
+                                            <span class="text-gray-900 font-medium">
+                                                <%= owner&.name %> <%= owner&.lastname %>
+                                            </span>
+                                            <% if index == 0 %>
+                                                <span class="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Actual</span>
+                                            <% end %>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                        <div>
+                                            <%= transaction.date.strftime("%d/%m/%Y a las %H:%M") %>
+                                            <% if index == 0 %>
+                                                <div class="text-xs text-gray-500 mt-1">Hace <%= time_ago_in_words(transaction.date) %></div>
+                                            <% end %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+                </div>
             <% else %>
-                <div class="empty-state">
-                    <h3>No hay transacciones registradas</h3>
-                    <p>Este producto aún no ha sido asignado a ningún propietario.</p>
+                <!-- Empty State -->
+                <div class="text-center py-12 px-6">
+                    <div class="text-gray-400 mb-3">
+                        <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay transacciones registradas</h3>
+                    <p class="text-gray-500">Este producto aún no ha sido asignado a ningún propietario.</p>
                 </div>
             <% end %>
         </div>
 
-        <div class="footer">
-            <%= link_to "Volver al inicio", home_path, class: "back-button" %>
+        <!-- Footer -->
+        <div class="mt-8 text-center">
+            <%= link_to home_path, class: "inline-flex items-center px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200" do %>
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver al inicio
+            <% end %>
         </div>
     </div>
 </body>

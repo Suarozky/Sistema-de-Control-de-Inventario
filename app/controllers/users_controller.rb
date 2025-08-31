@@ -1,6 +1,9 @@
 class UsersController < ApplicationController
   def new
-    @user = User.new
+    @products = Product.all
+    @users = User.all
+    @brands = Brand.all
+    @models = Model.all
   end
 
   def create
@@ -12,35 +15,54 @@ class UsersController < ApplicationController
     end
   end
 
-# En UsersController
-def import
-  unless params[:file].present?
-    redirect_to users_path, alert: "Por favor sube un archivo."
-    return
+  def count
+    @users_count = User.count
+    render json: { total_users: @users_count }
   end
 
-  begin
-    result = UserImportService.new(params[:file]).call
-    
-    if result[:errors].empty?
-      message = "#{result[:success_count]} usuarios importados correctamente."
-      message += " #{result[:skipped_count]} usuarios ya existían." if result[:skipped_count] > 0
-      redirect_to home_path, notice: message
-    else
-      error_message = "Se procesaron #{result[:success_count]} usuarios correctamente"
-      error_message += ", #{result[:skipped_count]} ya existían" if result[:skipped_count] > 0
-      error_message += ". Errores: #{result[:errors].join('; ')}"
-      redirect_to home_path, alert: error_message
+  def get_user
+    @users = User.all
+    @products = Product.all
+    @models = Model.all
+    @brands = Brand.all
+  end
+
+  def import
+    unless params[:file].present?
+      redirect_to users_path, alert: "Por favor sube un archivo."
+      return
     end
-    
-  rescue => e
-    Rails.logger.error "Error en import de usuarios: #{e.message}"
-    Rails.logger.error e.backtrace.join("\n")
-    redirect_to home_path, alert: "Error al importar: #{e.message}"
+
+    begin
+      result = UserImportService.new(params[:file]).call
+      
+      if result[:errors].empty?
+        message = "#{result[:success_count]} usuarios importados correctamente."
+        message += " #{result[:skipped_count]} usuarios ya existían." if result[:skipped_count] > 0
+        redirect_to home_path, notice: message
+      else
+        error_message = "Se procesaron #{result[:success_count]} usuarios correctamente"
+        error_message += ", #{result[:skipped_count]} ya existían" if result[:skipped_count] > 0
+        error_message += ". Errores: #{result[:errors].join('; ')}"
+        redirect_to home_path, alert: error_message
+      end
+      
+    rescue => e
+      Rails.logger.error "Error en import de usuarios: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      redirect_to home_path, alert: "Error al importar: #{e.message}"
+    end
   end
+
+def export
+  csv_data = ExportService.new("user").call
+  filename = "users_#{Time.current.strftime('%Y%m%d%H%M%S')}.csv"
+  
+  send_data csv_data, 
+    type: "text/csv; charset=utf-8",
+    filename: filename,
+    disposition: "attachment"
 end
-
-
 
   def my_products
     @user = User.find(params[:id])

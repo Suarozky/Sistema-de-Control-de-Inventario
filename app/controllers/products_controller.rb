@@ -6,17 +6,22 @@ class ProductsController < ApplicationController
   def index
     @products = Product.all
   end
-
   # GET /products/:id
   def show
   end
-
   # GET /products/new
-  def new
-    @product = Product.new
-    @brands = Brand.all
-    @models = Model.all
+ def new
+  @products = Product.all
+  @users = User.all
+  @brands = Brand.all
+  @models = Model.all
+end
+
+ def count
+    @users_count = User.count
+    render json: { total_users: @users_count }
   end
+
 
   # POST /products
   def create
@@ -49,11 +54,12 @@ class ProductsController < ApplicationController
 
       owner = User.find_by(id: @product.ownerid)
       render json: {
-        model: @product.model,
-        brand: @product.brand,
-        owner_name: "#{owner&.name} #{owner&.lastname}",
-        entry_date: @product.entry_date.strftime("%d/%m/%Y")
-      }
+  model: @product.model,
+  brand: @product.brand,
+  owner_name: "#{owner&.name} #{owner&.lastname}",
+  entry_date: @product.entry_date&.strftime("%d/%m/%Y") || ""
+}
+
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
     end
@@ -71,11 +77,50 @@ rescue => e
 end
 
 
+# En ProductsController
+def export
+  type = params[:type] || "product"  # Default a "product" si no se especifica type
+  
+  # Validar que el type sea uno de los permitidos
+  allowed_types = ["product", "brand", "model"]
+  unless allowed_types.include?(type)
+    redirect_to products_path, alert: "Tipo de exportación no válido: #{type}"
+    return
+  end
+  
+  begin
+    csv_data = ExportService.new(type).call
+    filename = "#{type.pluralize}_#{Time.current.strftime('%Y%m%d%H%M%S')}.csv"
+    
+    send_data csv_data,
+              type: "text/csv; charset=utf-8",
+              filename: filename,
+              disposition: "attachment"
+              
+  rescue => e
+    Rails.logger.error "Error en export de #{type}: #{e.message}"
+    redirect_to products_path, alert: "Error al exportar #{type}: #{e.message}"
+  end
+end
+
+
   # DELETE /products/:id
   def destroy
     @product.destroy
     redirect_to products_url, notice: "Producto eliminado correctamente."
   end
+
+  def get_product
+end
+
+def get_product
+  @products = Product.all
+    @users    = User.all       # si también renderizas usuarios
+    @models   = Model.all      # 💡 agrega esto
+    @brands   = Brand.all
+end
+
+
 
   # GET /products/:id/transactions_history
   def transactions_history
@@ -83,7 +128,6 @@ end
   end
 
   private
-
   # Busca el producto según el ID
   def set_product
     @product = Product.find(params[:id])

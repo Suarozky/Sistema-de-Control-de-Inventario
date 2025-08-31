@@ -4,13 +4,16 @@ class ProductImportService
   end
 
   def call
-    spreadsheet = Roo::Spreadsheet.open(@file.path)
+    spreadsheet = open_spreadsheet(@file)
     raw_headers = spreadsheet.row(1).map { |h| h.to_s.strip.downcase }
 
     expected_headers = ["brand", "model", "entry_date", "ownerid"]
 
+    # Mapear índices de columnas
     header_map = expected_headers.each_with_object({}) do |col, map|
-      map[col] = raw_headers.index(col)
+      idx = raw_headers.index(col)
+      raise "Falta columna esperada: #{col}" unless idx
+      map[col] = idx
     end
 
     (2..spreadsheet.last_row).each do |i|
@@ -39,16 +42,28 @@ class ProductImportService
         nil
       end
 
-    product = Product.new(
-  brand: brand.name,
-  model: model.name,
-  entry_date: entry_date,
-  ownerid: owner&.id
-)
+      product = Product.new(
+        brand: brand.name,
+        model: model.name,
+        entry_date: entry_date,
+        ownerid: owner&.id
+      )
 
       unless product.save
         Rails.logger.warn "No se pudo crear el producto en la fila #{i}: #{product.errors.full_messages.join(', ')}"
       end
+    end
+  end
+
+  private
+
+  def open_spreadsheet(file)
+    case File.extname(file.original_filename)
+    when ".csv"  then Roo::CSV.new(file.path)
+    when ".xls"  then Roo::Excel.new(file.path)
+    when ".xlsx" then Roo::Excelx.new(file.path)
+    else
+      raise "Formato de archivo no soportado: #{file.original_filename}"
     end
   end
 end

@@ -1,336 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Productos</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-
-        .header {
-            background-color: #4a90e2;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 400;
-        }
-
-        .user-info {
-            margin-top: 10px;
-            font-weight: 500;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            background: #f9f9f9;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 20px;
-            font-weight: bold;
-            color: #4a90e2;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #555;
-            text-transform: uppercase;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .product-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            background: #fff;
-            transition: box-shadow 0.3s;
-        }
-
-        .product-card:hover {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .product-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .product-id {
-            background-color: #4a90e2;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .product-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .product-details {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .current-status {
-            display: inline-block;
-            background-color: #28a745;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-top: 10px;
-        }
-
-        .previous-status {
-            display: inline-block;
-            background-color: #6c757d;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-top: 10px;
-        }
-
-        .section-title {
-            background-color: #e6f0fa;
-            padding: 15px 20px;
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: #4a90e2;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .products-section {
-            margin-bottom: 0;
-        }
-
-        .history-link {
-            display: inline-block;
-            margin-top: 10px;
-            color: #4a90e2;
-            text-decoration: none;
-            font-size: 12px;
-        }
-
-        .history-link:hover {
-            text-decoration: underline;
-        }
-
-        .footer {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #4a90e2;
-            color: white;
-            text-decoration: none;
-            border-radius: 20px;
-            transition: background 0.3s;
-        }
-
-        .back-button:hover {
-            background-color: #357ABD;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #777;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Productos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .current-product {
+      background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Mis Productos</h1>
-            <div class="user-info">
-                <strong><%= @user.name %> <%= @user.lastname %></strong>
-            </div>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-4xl mx-auto p-4">
+
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div class="p-6 border-b border-gray-100">
+        <h1 class="text-2xl font-semibold text-gray-900 mb-2">Mis Productos</h1>
+        <div class="text-sm text-gray-600">
+          <span class="font-medium"><%= @user.name %> <%= @user.lastname %></span>
         </div>
+      </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number"><%= @current_products.count + @previous_products.count %></div>
-                <div class="stat-label">Total Productos</div>
+      <!-- Stats -->
+      <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+        <div class="grid grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600">
+              <%= @current_products.count + @previous_products.count %>
             </div>
-            <div class="stat-item">
-                <div class="stat-number"><%= @current_products.count %></div>
-                <div class="stat-label">Actualmente Asignados</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number"><%= @previous_products.count %></div>
-                <div class="stat-label">Anteriores</div>
-            </div>
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Total</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600"><%= @current_products.count %></div>
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Actuales</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600"><%= @previous_products.count %></div>
+            <div class="text-xs text-gray-500 uppercase tracking-wide">Anteriores</div>
+          </div>
         </div>
-
-        <div class="content">
-            <% if @current_products.any? || @previous_products.any? %>
-                
-                <!-- Productos Actuales -->
-                <% if @current_products.any? %>
-                    <div class="products-section">
-                        <h2 class="section-title">Productos Actuales (<%= @current_products.count %>)</h2>
-                        <div class="products-grid">
-                            <% @current_products.each do |product| %>
-                                <% latest_transaction = product.transactions.order(date: :desc).first %>
-                                <% user_transaction = product.transactions.where(ownerid: @user.id).order(date: :desc).first %>
-                                
-                                <div class="product-card">
-                                    <div class="product-header">
-                                        <span class="product-id">ID: <%= product.id %></span>
-                                        <span class="current-status">Actual</span>
-                                    </div>
-                                    
-                                    <div class="product-title">
-                                        <% if product.brand.present? && product.model.present? %>
-                                            <%= product.brand %> <%= product.model %>
-                                        <% elsif product.model.present? %>
-                                            <%= product.model %>
-                                        <% elsif product.brand.present? %>
-                                            <%= product.brand %>
-                                        <% else %>
-                                            Producto #<%= product.id %>
-                                        <% end %>
-                                    </div>
-                                    
-                                    <div class="product-details">
-                                        <% if product.brand.present? %>
-                                            <strong>Marca:</strong> <%= product.brand %><br>
-                                        <% end %>
-                                        <% if product.model.present? %>
-                                            <strong>Modelo:</strong> <%= product.model %><br>
-                                        <% end %>
-                                        <% if product.entry_date.present? %>
-                                            <strong>Fecha de ingreso:</strong> <%= product.entry_date.strftime("%d/%m/%Y") %><br>
-                                        <% end %>
-                                        <% if user_transaction %>
-                                            <strong>Asignado el:</strong> <%= user_transaction.date.strftime("%d/%m/%Y a las %H:%M") %><br>
-                                            <strong>Hace:</strong> <%= time_ago_in_words(user_transaction.date) %>
-                                        <% end %>
-                                    </div>
-                                    
-                                    <% if product.transactions.count > 1 %>
-                                        <a href="#" class="history-link" onclick="alert('Historial del producto #<%= product.id %>: <%= product.transactions.count %> transacciones')">
-                                            Ver historial completo (<%= product.transactions.count %> transacciones) →
-                                        </a>
-                                    <% end %>
-                                </div>
-                            <% end %>
-                        </div>
-                    </div>
-                <% end %>
-
-                <!-- Productos Anteriores -->
-                <% if @previous_products.any? %>
-                    <div class="products-section">
-                        <h2 class="section-title">Productos Anteriores (<%= @previous_products.count %>)</h2>
-                        <div class="products-grid">
-                            <% @previous_products.each do |product| %>
-                                <% latest_transaction = product.transactions.order(date: :desc).first %>
-                                <% user_transaction = product.transactions.where(ownerid: @user.id).order(date: :desc).first %>
-                                <% current_owner = User.find_by(id: latest_transaction.ownerid) %>
-                                
-                                <div class="product-card">
-                                    <div class="product-header">
-                                        <span class="product-id">ID: <%= product.id %></span>
-                                        <span class="previous-status">Anterior</span>
-                                    </div>
-                                    
-                                    <div class="product-title">
-                                        <% if product.brand.present? && product.model.present? %>
-                                            <%= product.brand %> <%= product.model %>
-                                        <% elsif product.model.present? %>
-                                            <%= product.model %>
-                                        <% elsif product.brand.present? %>
-                                            <%= product.brand %>
-                                        <% else %>
-                                            Producto #<%= product.id %>
-                                        <% end %>
-                                    </div>
-                                    
-                                    <div class="product-details">
-                                        <% if product.brand.present? %>
-                                            <strong>Marca:</strong> <%= product.brand %><br>
-                                        <% end %>
-                                        <% if product.model.present? %>
-                                            <strong>Modelo:</strong> <%= product.model %><br>
-                                        <% end %>
-                                        <% if user_transaction %>
-                                            <strong>Tuviste este producto del:</strong> <%= user_transaction.date.strftime("%d/%m/%Y") %><br>
-                                        <% end %>
-                                        <% if current_owner %>
-                                            <strong>Propietario actual:</strong> <%= current_owner.name %> <%= current_owner.lastname %><br>
-                                        <% end %>
-                                        <% if latest_transaction %>
-                                            <strong>Desde el:</strong> <%= latest_transaction.date.strftime("%d/%m/%Y") %>
-                                        <% end %>
-                                    </div>
-                                    
-                                    <% if product.transactions.count > 1 %>
-                                        <a href="#" class="history-link" onclick="alert('Historial del producto #<%= product.id %>: <%= product.transactions.count %> transacciones')">
-                                            Ver historial completo (<%= product.transactions.count %> transacciones) →
-                                        </a>
-                                    <% end %>
-                                </div>
-                            <% end %>
-                        </div>
-                    </div>
-                <% end %>
-
-            <% else %>
-                <div class="empty-state">
-                    <h3>No tienes productos asignados</h3>
-                    <p>Aún no se te han asignado productos en el sistema.</p>
-                </div>
-            <% end %>
-        </div>
-
-        <div class="footer">
-            <a href="<%= home_path %>" class="back-button">Volver al inicio</a>
-        </div>
+      </div>
     </div>
+
+    <!-- Tabla de productos -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+      <% if @current_products.any? || @previous_products.any? %>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-100">
+                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Asignación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% (@current_products + @previous_products).each_with_index do |product, index| %>
+                <% latest_transaction = product.transactions.order(date: :desc).first %>
+                <% user_transaction = product.transactions.where(ownerid: @user.id).order(date: :desc).first %>
+                <tr class="<%= @current_products.include?(product) ? 'current-product' : (index.even? ? 'bg-white' : 'bg-gray-50') %>">
+                  <td class="px-6 py-4 text-sm text-gray-900"><%= index + 1 %></td>
+                  <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                    <% if product.brand.present? && product.model.present? %>
+                      <%= product.brand %> <%= product.model %>
+                    <% else %>
+                      Producto #<%= product.id %>
+                    <% end %>
+                  </td>
+                  <td class="px-6 py-4 text-sm">
+                    <% if @current_products.include?(product) %>
+                      <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Actual</span>
+                    <% else %>
+                      <span class="text-gray-500">Anterior</span>
+                    <% end %>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-900">
+                    <% if user_transaction %>
+                      <%= user_transaction.date.strftime("%d/%m/%Y a las %H:%M") %>
+                      <% if @current_products.include?(product) %>
+                        <div class="text-xs text-gray-500 mt-1">Hace <%= time_ago_in_words(user_transaction.date) %></div>
+                      <% end %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <!-- Empty State -->
+        <div class="text-center py-12 px-6">
+          <div class="text-gray-400 mb-3">
+            <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes productos asignados</h3>
+          <p class="text-gray-500">Aún no se te han asignado productos en el sistema.</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center">
+      <%= link_to home_path, class: "inline-flex items-center px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Volver al inicio
+      <% end %>
+    </div>
+  </div>
 </body>
 </html>

@@ -1,10 +1,29 @@
-<div class="card" style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-  <h3>Registro <%= user.id %></h3>
-  <ul>
-    <li><strong>Nombre:</strong> <%= user.name %></li>
-    <li><strong>Apellido:</strong> <%= user.lastname %></li>
-    <li>
-      <%= link_to "Registro de productos", my_products_user_path(user), class: "btn" %>
-    </li>
-  </ul>
+<div class="card bg-white border w-full border-gray-200 rounded-lg p-4 transition-all duration-200 mb-2.5 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100">
+  <div class="flex items-center justify-between">
+    <!-- Información del usuario en horizontal -->
+    <div class="flex items-center gap-8">
+      <div class="w-10 h-10 bg-blue-500 to-blue-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">
+        <%= user.name&.first&.upcase %>
+      </div>
+      
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500 font-medium">ID</span>
+        <span class="text-gray-800 font-semibold"><%= user.id %></span>
+      </div>
+      
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500 font-medium">Nombre</span>
+        <span class="display-field text-gray-800 font-medium"><%= user.name %></span>
+      </div>
+      
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500 font-medium">Apellido</span>
+        <span class="display-field text-gray-800 font-medium"><%= user.lastname %></span>
+      </div>
+    </div>
+
+    <!-- Botón de acción -->
+    <%= link_to "Ver productos", my_products_user_path(user), 
+        class: "px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px hover:shadow-md" %>
+  </div>
 </div>
