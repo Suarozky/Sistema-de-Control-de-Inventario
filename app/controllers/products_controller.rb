@@ -23,11 +23,6 @@ class ProductsController < ApplicationController
     end
   end
 
-  # GET /products/count
-  def count
-    @users_count = User.count
-    render json: { total_users: @users_count }
-  end
 
   # POST /products
   def create

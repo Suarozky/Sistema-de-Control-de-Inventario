@@ -1,9 +1,23 @@
-one:
-  id: 980190962  # ID fijo que coincida con lo que esperan los tests
+user:
+  id: 980190962
   name: TestUser
   lastname: TestLastname
+  role: user
 
-two:
+admin:
   id: 980190963
-  name: AnotherUser  
+  name: AnotherUser
   lastname: AnotherLastname
+  role: admin
+
+one:  # Para tests que buscan 'one'
+  id: 980190964
+  name: OneUser
+  lastname: OneLastname
+  role: user
+
+regular:  # Para policy tests que buscan 'regular'
+  id: 980190965
+  name: RegularUser
+  lastname: RegularLastname
+  role: user

@@ -1,11 +1,12 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:my_products]
+
   def index
-  @users = policy_scope(User)  
+    @users = policy_scope(User)  
     @products = Product.all
     @models = Model.all
     @brands = Brand.all
-  
-end
+  end
 
   def new
     @products = Product.all
@@ -15,7 +16,7 @@ end
     render layout: "minimal"
   end
 
-def create
+  def create
     @user = User.new(user_params)
     @user.role = params[:user][:role] || 'user'
     authorize @user
@@ -31,12 +32,10 @@ def create
     end
   end
 
-
   def count
     @users_count = User.count
     render json: { total_users: @users_count }
   end
-
 
   def import
     unless params[:file].present?
@@ -65,20 +64,17 @@ def create
     end
   end
 
-def export
-  csv_data = ExportService.new("user").call
-  filename = "users_#{Time.current.strftime('%Y%m%d%H%M%S')}.csv"
-  
-  send_data csv_data, 
-    type: "text/csv; charset=utf-8",
-    filename: filename,
-    disposition: "attachment"
-end
+  def export
+    csv_data = ExportService.new("user").call
+    filename = "users_#{Time.current.strftime('%Y%m%d%H%M%S')}.csv"
+    
+    send_data csv_data, 
+      type: "text/csv; charset=utf-8",
+      filename: filename,
+      disposition: "attachment"
+  end
 
   def my_products
-   
-    @user = User.find(params[:id])
-    
     # Obtener todos los productos que han tenido transacciones con este usuario
     @products = Product.joins(:transactions)
                        .where(transactions: { ownerid: @user.id })
@@ -99,10 +95,16 @@ end
         @previous_products << product
       end
     end
-     render layout: "minimal"
+    
+    render layout: "minimal"
   end
 
   private
+
+  def set_user
+    @user = User.find_by(id: params[:id])
+    redirect_to users_path, alert: "Usuario no encontrado" unless @user
+  end
 
   def user_params
     params.require(:user).permit(:name, :lastname)

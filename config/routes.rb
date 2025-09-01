@@ -8,6 +8,15 @@ Rails.application.routes.draw do
 
   get "/home", to: "home#new"
 
+  # API v1
+  namespace :api do
+    namespace :v1 do
+      resources :products, only: [:index, :show, :create, :update, :destroy]
+      resources :users, only: [:index, :show, :create, :update, :destroy]
+      resources :transactions, only: [:index, :show, :create, :update, :destroy]
+    end
+  end
+
   resources :users do
     collection do
       post :import       
