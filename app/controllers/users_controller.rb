@@ -1,31 +1,42 @@
 class UsersController < ApplicationController
+  def index
+  @users = policy_scope(User)  
+    @products = Product.all
+    @models = Model.all
+    @brands = Brand.all
+  
+end
+
   def new
     @products = Product.all
     @users = User.all
     @brands = Brand.all
     @models = Model.all
+    render layout: "minimal"
   end
 
-  def create
+def create
     @user = User.new(user_params)
+    @user.role = params[:user][:role] || 'user'
+    authorize @user
+
     if @user.save
       redirect_to home_path, notice: "Usuario creado con éxito"
     else
-      render :new, status: :unprocessable_entity
+      @products = Product.all
+      @users = User.all
+      @brands = Brand.all
+      @models = Model.all
+      render :new, status: :unprocessable_content, layout: "minimal"
     end
   end
+
 
   def count
     @users_count = User.count
     render json: { total_users: @users_count }
   end
 
-  def get_user
-    @users = User.all
-    @products = Product.all
-    @models = Model.all
-    @brands = Brand.all
-  end
 
   def import
     unless params[:file].present?
@@ -65,6 +76,7 @@ def export
 end
 
   def my_products
+   
     @user = User.find(params[:id])
     
     # Obtener todos los productos que han tenido transacciones con este usuario
@@ -87,6 +99,7 @@ end
         @previous_products << product
       end
     end
+     render layout: "minimal"
   end
 
   private

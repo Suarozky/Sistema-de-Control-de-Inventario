@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
   def new
     # Mostrar formulario de login
+    render layout: "minimal"
   end
 
   def create

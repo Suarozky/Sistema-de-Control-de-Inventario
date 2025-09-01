@@ -20,6 +20,9 @@ gem "jbuilder"
 gem "roo", "~> 2.10"
 # Gemfile
 gem 'caxlsx'
+gem "rails-controller-testing"
+gem 'pundit'
+
 
 
 

@@ -9,32 +9,25 @@
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= yield :head %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <!-- ✅ CSS -->
+    <!-- CSS -->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 
-    <!-- ✅ JS (sin extras, Importmap ya gestiona Turbo/Stimulus) -->
+    <!-- JS -->
     <%= javascript_importmap_tags %>
+    <%= javascript_include_tag 'product-modal-utils', 'data-turbo-track': 'reload' %>
+    <%= javascript_include_tag 'product-cards', 'data-turbo-track': 'reload' %>
   </head>
 
   <body class="bg-gray-50 flex min-h-screen">
-    <!-- Sidebar (solo si no está en rutas restringidas) -->
-    <% unless [
-        root_path, 
-        new_user_path, 
-        new_product_path
-      ].include?(request.path) || 
-         request.path.match?(/^\/users\/\d+\/my_products$/) || 
-         request.path.match?(/^\/products\/\d+\/transactions_history$/) %>
-      
-      <%= render "shared/sidebar" %>
-    <% end %>
+    <%= render "shared/sidebar" %> <!-- Sidebar siempre incluido -->
+
+    <%= render "shared/confirmation_modal" %>
 
     <!-- Contenido principal -->
     <div class="flex-1 flex flex-col">

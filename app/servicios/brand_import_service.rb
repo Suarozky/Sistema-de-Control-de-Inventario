@@ -1,4 +1,4 @@
-# app/services/brand_import_service.rb
+
 class BrandImportService
   def initialize(file)
     @file = file
@@ -15,7 +15,7 @@ class BrandImportService
 
     (2..spreadsheet.last_row).each do |i|
       row_array = spreadsheet.row(i).to_a
-      next if row_array.all?(&:blank?)  # Ignorar filas vacías
+      next if row_array.all?(&:blank?) 
 
       row_hash = Hash[[header, row_array].transpose]
       Brand.find_or_create_by(name: row_hash["name"].to_s.strip)

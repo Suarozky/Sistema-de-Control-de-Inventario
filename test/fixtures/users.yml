@@ -1,9 +1,9 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
-  name: MyString
-  lastname: MyString
+  id: 980190962  # ID fijo que coincida con lo que esperan los tests
+  name: TestUser
+  lastname: TestLastname
 
 two:
-  name: MyString
-  lastname: MyString
+  id: 980190963
+  name: AnotherUser  
+  lastname: AnotherLastname

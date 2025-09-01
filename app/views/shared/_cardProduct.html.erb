@@ -1,177 +1,14 @@
-<!-- Modal de confirmación -->
-<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-lg font-semibold mb-4">Confirmar cambios</h2>
-    <div id="changesList" class="mb-4 text-sm text-gray-700"></div>
-    <div class="flex justify-end gap-2">
-      <button id="cancelModal" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">Cancelar</button>
-      <button id="confirmSave" class="px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600">Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<script>
-window.ProductModalUtils = {
-  showConfirmationModal: function(changes, onConfirm) {
-    const modal = document.getElementById('confirmModal');
-    const changesList = document.getElementById('changesList');
-    const confirmBtn = document.getElementById('confirmSave');
-    const cancelBtn = document.getElementById('cancelModal');
-
-    changesList.innerHTML = changes.map(c => `<div class="mb-1">${c}</div>`).join('');
-    modal.classList.remove("hidden");
-
-    confirmBtn.onclick = () => {
-      modal.classList.add("hidden");
-      onConfirm();
-    };
-
-    cancelBtn.onclick = () => modal.classList.add("hidden");
-
-    modal.onclick = (e) => {
-      if (e.target === modal) modal.classList.add("hidden");
-    };
-  },
-
-  showSuccessMessage: function() {
-    const msg = document.createElement("div");
-    msg.className = "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow";
-    msg.textContent = "✓ Producto actualizado correctamente";
-    document.body.appendChild(msg);
-    setTimeout(() => msg.remove(), 3000);
-  }
-};
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.card').forEach(card => {
-    const editBtn = card.querySelector('.edit-btn');
-    const saveBtn = card.querySelector('.save-btn');
-    const historyBtn = card.querySelector('.history-btn');
-
-    let originalValues = {};
-
-    editBtn.addEventListener('click', () => {
-      const displayFields = card.querySelectorAll('.display-field');
-      const selects = card.querySelectorAll('select.edit-field');
-      const inputDate = card.querySelector('input.edit-field');
-
-      originalValues = {
-        model: displayFields[0].textContent.trim(),
-        brand: displayFields[1].textContent.trim(),
-        owner: displayFields[2].textContent.trim(),
-        entryDate: displayFields[3].textContent.trim(),
-        modelValue: selects[0].value,
-        brandValue: selects[1].value,
-        ownerValue: selects[2].value,
-        dateValue: inputDate.value
-      };
-
-      card.querySelectorAll('.display-field').forEach(el => el.style.display = 'none');
-      card.querySelectorAll('.edit-field').forEach(el => el.style.display = 'inline');
-      editBtn.style.display = 'none';
-      historyBtn.style.display = 'none';
-      saveBtn.style.display = 'inline';
-    });
-
-    saveBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-
-      const productId = card.dataset.productId;
-      const selects = card.querySelectorAll('select.edit-field');
-      const inputDate = card.querySelector('input.edit-field');
-
-      const model = selects[0].value;
-      const brand = selects[1].value;
-      const ownerId = selects[2].value;
-      const entryDate = inputDate.value;
-
-      const ownerName = selects[2].options[selects[2].selectedIndex].textContent.trim();
-
-      const formatDate = (dateStr) => {
-        if (!dateStr) return '';
-        const d = new Date(dateStr);
-        return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      };
-
-      const changes = [];
-      if (model !== originalValues.modelValue) {
-        changes.push(`<strong>Modelo:</strong> ${originalValues.model} → ${model}`);
-      }
-      if (brand !== originalValues.brandValue) {
-        changes.push(`<strong>Marca:</strong> ${originalValues.brand} → ${brand}`);
-      }
-      if (ownerId !== originalValues.ownerValue) {
-        changes.push(`<strong>Propietario:</strong> ${originalValues.owner} → ${ownerName}`);
-      }
-      if (entryDate !== originalValues.dateValue) {
-        changes.push(`<strong>Fecha:</strong> ${originalValues.entryDate} → ${formatDate(entryDate)}`);
-      }
-
-      if (changes.length === 0) {
-        exitEditMode();
-        return;
-      }
-
-      window.ProductModalUtils.showConfirmationModal(changes, async () => {
-        await saveProduct(productId, model, brand, ownerId, entryDate);
-      });
-    });
-
-    async function saveProduct(productId, model, brand, ownerId, entryDate) {
-      try {
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const response = await fetch(`/products/${productId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': token
-          },
-          body: JSON.stringify({ product: { model, brand, owner_id: ownerId, entry_date: entryDate } })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const displayFields = card.querySelectorAll('.display-field');
-          displayFields[0].textContent = data.model;
-          displayFields[1].textContent = data.brand;
-          displayFields[2].textContent = data.owner_name;
-          displayFields[3].textContent = data.entry_date;
-
-          exitEditMode();
-          window.ProductModalUtils.showSuccessMessage();
-        } else {
-          alert("Error al actualizar el producto");
-        }
-      } catch (err) {
-        alert("Error al actualizar el producto: " + err.message);
-      }
-    }
-
-    function exitEditMode() {
-      card.querySelectorAll('.display-field').forEach(el => el.style.display = 'inline');
-      card.querySelectorAll('.edit-field').forEach(el => el.style.display = 'none');
-      editBtn.style.display = 'inline';
-      historyBtn.style.display = 'inline';
-      saveBtn.style.display = 'none';
-    }
-  });
-});
-</script>
-
-
-
-<div class="card bg-white w-full  border border-gray-200 rounded-lg p-4 transition-all duration-200 mb-2.5 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100" data-product-id="<%= product.id %>">
+<div class="card bg-white w-full border border-gray-200 rounded-lg p-4 transition-all duration-200 mb-2.5 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100" 
+     data-product-id="<%= product.id %>">
+  
   <div class="flex items-center justify-between">
-    <!-- Información del producto en horizontal -->
     <div class="flex items-center gap-6">
       <!-- Avatar con ID -->
       <div class="w-10 h-10 bg-blue-500 to-pink-500 rounded-lg flex items-center justify-center text-white text-xs font-bold">
         #<%= product.id %>
       </div>
       
-      <!-- Modelo -->
+
       <div class="flex flex-col min-w-0">
         <span class="text-xs text-gray-500 font-medium">Modelo</span>
         <span class="display-field text-gray-800 font-medium"><%= product.model %></span>
@@ -181,8 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <% end %>
         </select>
       </div>
-      
-      <!-- Marca -->
+
       <div class="flex flex-col min-w-0">
         <span class="text-xs text-gray-500 font-medium">Marca</span>
         <span class="display-field text-gray-800 font-medium"><%= product.brand %></span>
@@ -192,8 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <% end %>
         </select>
       </div>
-      
-      <!-- Owner -->
+
       <div class="flex flex-col min-w-0">
         <span class="text-xs text-gray-500 font-medium">Propietario</span>
         <span class="display-field text-gray-800 font-medium"><%= product.owner&.name %> <%= product.owner&.lastname %></span>
@@ -204,204 +39,34 @@ document.addEventListener('DOMContentLoaded', function() {
         </select>
       </div>
       
-      <!-- Fecha -->
+
       <div class="flex flex-col min-w-0">
         <span class="text-xs text-gray-500 font-medium">Fecha Ingreso</span>
         <span class="display-field text-gray-800 font-medium"><%= product.entry_date.strftime("%d/%m/%Y") if product.entry_date %></span>
-      <input type="date" 
-  class="edit-field mt-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500" 
-  style="display:none;" 
-  value="<%= product.entry_date&.strftime('%Y-%m-%d') %>">
-
+        <input type="date" 
+               class="edit-field mt-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500" 
+               style="display:none;" 
+               value="<%= product.entry_date&.strftime('%Y-%m-%d') %>">
       </div>
     </div>
 
-    <!-- Botones de acción -->
+
     <div class="flex items-center gap-2 ml-4">
+    <% if policy(Product).create? %>
       <button class="edit-btn px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-md transition-all duration-200 hover:bg-gray-200 hover:-translate-y-px">
         Editar
       </button>
+      <% end %>
       
-      <button class="history-btn px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px" onclick="window.location.href='<%= transactions_history_product_path(product) %>'">
-       Detalles
+      <button class="history-btn px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px" 
+              onclick="window.location.href='<%= transactions_history_product_path(product) %>'">
+        Detalles
       </button>
 
-      <button class="save-btn px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px" style="display:none;">
-       Guardar
+      <button class="save-btn px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px" 
+              style="display:none;">
+        Guardar
       </button>
     </div>
   </div>
 </div>
-
-<script>
-// Esperar a que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM cargado, inicializando tarjetas de productos');
-  
-  document.querySelectorAll('.card').forEach(card => {
-    const editBtn = card.querySelector('.edit-btn');
-    const saveBtn = card.querySelector('.save-btn');
-    const historyBtn = card.querySelector('.history-btn');
-    
-    // Almacenar valores originales cuando se entra en modo edición
-    let originalValues = {};
-
-    editBtn.addEventListener('click', () => {
-      console.log('Botón editar clickeado');
-      
-      // Guardar valores originales
-      const displayFields = card.querySelectorAll('.display-field');
-      const selects = card.querySelectorAll('select.edit-field');
-      const inputDate = card.querySelector('input.edit-field');
-      
-      originalValues = {
-        model: displayFields[0].textContent.trim(),
-        brand: displayFields[1].textContent.trim(),
-        owner: displayFields[2].textContent.trim(),
-        entryDate: displayFields[3].textContent.trim(),
-        modelValue: selects[0].value,
-        brandValue: selects[1].value,
-        ownerValue: selects[2].value,
-        dateValue: inputDate.value
-      };
-
-      console.log('Valores originales guardados:', originalValues);
-
-      card.querySelectorAll('.display-field').forEach(el => el.style.display = 'none');
-      card.querySelectorAll('.edit-field').forEach(el => el.style.display = 'inline');
-      editBtn.style.display = 'none';
-      historyBtn.style.display = 'none';
-      saveBtn.style.display = 'inline';
-    });
-
-    saveBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      console.log('Botón guardar clickeado');
-      
-      const productId = card.dataset.productId;
-      const selects = card.querySelectorAll('select.edit-field');
-      const inputDate = card.querySelector('input.edit-field');
-
-      const model = selects[0].value;
-      const brand = selects[1].value;
-      const ownerId = selects[2].value;
-      const entryDate = inputDate.value;
-
-      // Obtener el nombre del propietario seleccionado
-      const selectedOwnerOption = selects[2].options[selects[2].selectedIndex];
-      const ownerName = selectedOwnerOption.textContent;
-
-      // Formatear fecha para comparación
-      const formatDate = (dateStr) => {
-        if (!dateStr) return '';
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      };
-
-      console.log('Valores originales:', originalValues);
-      console.log('Valores actuales:', { 
-        model, 
-        brand, 
-        ownerName: ownerName.trim(), 
-        entryDate: formatDate(entryDate),
-        originalModel: originalValues.model,
-        originalBrand: originalValues.brand,
-        originalOwner: originalValues.owner,
-        originalDate: originalValues.entryDate
-      });
-
-      // Detectar cambios
-      const changes = [];
-      if (model !== originalValues.modelValue) {
-        changes.push(`<strong>Modelo:</strong> ${originalValues.model} → ${model}`);
-      }
-      if (brand !== originalValues.brandValue) {
-        changes.push(`<strong>Marca:</strong> ${originalValues.brand} → ${brand}`);
-      }
-      if (ownerId !== originalValues.ownerValue) {
-        changes.push(`<strong>Propietario:</strong> ${originalValues.owner} → ${ownerName.trim()}`);
-      }
-      if (entryDate !== originalValues.dateValue) {
-        changes.push(`<strong>Fecha:</strong> ${originalValues.entryDate} → ${formatDate(entryDate)}`);
-      }
-
-      console.log('Cambios detectados:', changes);
-
-      // Si no hay cambios, salir del modo edición directamente
-      if (changes.length === 0) {
-        console.log('No hay cambios, saliendo del modo edición');
-        exitEditMode();
-        return;
-      }
-
-      // Verificar si las funciones del modal están disponibles
-      if (window.ProductModalUtils && window.ProductModalUtils.showConfirmationModal) {
-  console.log('Mostrando modal de confirmación');
-  window.ProductModalUtils.showConfirmationModal(changes, async () => {
-    await saveProduct(productId, model, brand, ownerId, entryDate);
-  });
-}
-else {
-        console.error('Modal utilities no están disponibles, guardando directamente');
-        await saveProduct(productId, model, brand, ownerId, entryDate);
-      }
-    });
-
-    // Función para guardar el producto
-    async function saveProduct(productId, model, brand, ownerId, entryDate) {
-      try {
-        console.log('Guardando producto...');
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        const response = await fetch(`/products/${productId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': token
-          },
-       body: JSON.stringify({ 
-  product: { 
-    model, 
-    brand, 
-    ownerid: ownerId,   // ⚠️ cambiar owner_id a ownerid
-    entry_date: entryDate || null   // null si no se toca
-  } 
-})
-
-
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Respuesta del servidor:', data);
-
-          const displayFields = card.querySelectorAll('.display-field');
-          displayFields[0].textContent = data.model;
-          displayFields[1].textContent = data.brand;
-          displayFields[2].textContent = data.owner_name;
-          displayFields[3].textContent = data.entry_date;
-
-          exitEditMode();
-          if (window.ProductModalUtils && window.ProductModalUtils.showSuccessMessage) {
-            window.ProductModalUtils.showSuccessMessage();
-          }
-        } else {
-          console.error('Error en la respuesta:', response.status);
-          alert("Error al actualizar el producto");
-        }
-      } catch (error) {
-        console.error('Error en la petición:', error);
-        alert("Error al actualizar el producto: " + error.message);
-      }
-    }
-
-    function exitEditMode() {
-      card.querySelectorAll('.display-field').forEach(el => el.style.display = 'inline');
-      card.querySelectorAll('.edit-field').forEach(el => el.style.display = 'none');
-      editBtn.style.display = 'inline';
-      historyBtn.style.display = 'inline';
-      saveBtn.style.display = 'none';
-    }
-  });
-});
-</script>

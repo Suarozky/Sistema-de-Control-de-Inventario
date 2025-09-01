@@ -11,10 +11,9 @@ class UserImportService
     begin
       spreadsheet = open_spreadsheet(@file)
       
-      # Obtener headers y limpiarlos
       header = spreadsheet.row(1).map { |h| h.to_s.strip.downcase }
       
-      # Verificar headers de forma más flexible
+
       expected_header = ["name", "lastname"]
       unless expected_header.all? { |col| header.include?(col) }
         return {
@@ -24,17 +23,17 @@ class UserImportService
         }
       end
 
-      # Obtener índices de las columnas
+
       name_index = header.index("name")
       lastname_index = header.index("lastname")
 
-      # Procesar cada fila
+
       (2..spreadsheet.last_row).each do |i|
         begin
           row_array = spreadsheet.row(i).to_a
           next if row_array.all? { |cell| cell.blank? || cell.to_s.strip.blank? }
 
-          # Extraer valores usando índices
+
           name = row_array[name_index]&.to_s&.strip
           lastname = row_array[lastname_index]&.to_s&.strip
 

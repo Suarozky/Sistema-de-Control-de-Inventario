@@ -9,7 +9,7 @@ class ProductImportService
 
     expected_headers = ["brand", "model", "entry_date", "ownerid"]
 
-    # Mapear índices de columnas
+   
     header_map = expected_headers.each_with_object({}) do |col, map|
       idx = raw_headers.index(col)
       raise "Falta columna esperada: #{col}" unless idx
@@ -31,7 +31,6 @@ class ProductImportService
       brand = Brand.find_or_create_by(name: brand_name)
       model = Model.find_or_create_by(name: model_name)
 
-      # Convertir entry_date a fecha si es posible
       entry_date = begin
         if entry_date_raw.is_a?(Date) || entry_date_raw.is_a?(Time)
           entry_date_raw.to_date

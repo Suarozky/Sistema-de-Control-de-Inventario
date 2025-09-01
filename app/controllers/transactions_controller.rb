@@ -1,16 +1,11 @@
 class TransactionsController < ApplicationController
-  before_action :set_transaction, only: [:show, :edit, :update, :destroy]
-
 
   def index
-    @transactions_count = Transaction.count
-    @latest_transactions = Transaction
-                             .includes(:product, :owner)
-                             .order(date: :desc)
-                             .limit(10)
-  end
-
-  def show
+    @transactions = Transaction.all
+    respond_to do |format|
+      format.html
+      format.json { render json: @transactions }
+    end
   end
 
   def new
@@ -19,7 +14,6 @@ class TransactionsController < ApplicationController
     @users = User.all
   end
 
-
   def create
     @transaction = Transaction.new(transaction_params)
     if @transaction.save
@@ -27,39 +21,14 @@ class TransactionsController < ApplicationController
     else
       @products = Product.all
       @users = User.all
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
-
-
-  def edit
-    @products = Product.all
-    @users = User.all
-  end
-
-
-  def update
-    if @transaction.update(transaction_params)
-      redirect_to @transaction, notice: 'Transacción actualizada exitosamente.'
-    else
-      @products = Product.all
-      @users = User.all
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-
-  def destroy
-    @transaction.destroy
-    redirect_to transactions_path, notice: 'Transacción eliminada.'
-  end
-
 
   def count
     @transactions_count = Transaction.count
     render json: { total_transactions: @transactions_count }
   end
-
 
   def import
     unless params[:file].present?

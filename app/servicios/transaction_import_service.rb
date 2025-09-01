@@ -11,13 +11,13 @@ class TransactionImportService
     begin
       spreadsheet = open_spreadsheet(@file)
       
-      # Obtener headers y limpiarlos
+
       raw_headers = spreadsheet.row(1).map { |h| h.to_s.strip.downcase }
       
-      # Headers esperados para transacciones
+
       expected_headers = ["ownerid", "productid", "date"]
       
-      # Verificar que existan todas las columnas necesarias
+
       missing_headers = expected_headers.reject { |header| raw_headers.include?(header) }
       unless missing_headers.empty?
         return {
@@ -27,23 +27,23 @@ class TransactionImportService
         }
       end
 
-      # Mapear índices de columnas
+
       header_map = expected_headers.each_with_object({}) do |col, map|
         map[col] = raw_headers.index(col)
       end
 
-      # Procesar cada fila
+
       (2..spreadsheet.last_row).each do |i|
         begin
           row = spreadsheet.row(i).to_a
           next if row.all? { |cell| cell.blank? || cell.to_s.strip.blank? }
 
-          # Extraer valores usando índices
+
           owner_id = row[header_map["ownerid"]].to_i rescue nil
           product_id = row[header_map["productid"]].to_i rescue nil
           date_raw = row[header_map["date"]]
 
-          # Validaciones básicas
+
           if owner_id.blank? || owner_id == 0
             errors << "Fila #{i}: ownerid es requerido y debe ser un número válido"
             next
@@ -54,35 +54,33 @@ class TransactionImportService
             next
           end
 
-          # Verificar que el usuario existe
           owner = User.find_by(id: owner_id)
           unless owner
             errors << "Fila #{i}: Usuario con ID #{owner_id} no existe"
             next
           end
 
-          # Verificar que el producto existe
+
           product = Product.find_by(id: product_id)
           unless product
             errors << "Fila #{i}: Producto con ID #{product_id} no existe"
             next
           end
 
-          # Convertir fecha
+
           transaction_date = begin
             if date_raw.is_a?(Date) || date_raw.is_a?(Time)
               date_raw.to_date
             elsif date_raw.present?
               Date.parse(date_raw.to_s)
             else
-              Date.current  # Fecha actual si no se proporciona
+              Date.current 
             end
           rescue => date_error
             errors << "Fila #{i}: Fecha inválida '#{date_raw}' - #{date_error.message}"
             next
           end
 
-          # Verificar si ya existe una transacción similar
           existing_transaction = Transaction.find_by(
             ownerid: owner_id,
             productid: product_id,
@@ -94,7 +92,6 @@ class TransactionImportService
             next
           end
 
-          # Crear la transacción
           transaction = Transaction.new(
             ownerid: owner_id,
             productid: product_id,

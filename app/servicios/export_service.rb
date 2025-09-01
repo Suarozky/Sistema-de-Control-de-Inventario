@@ -1,4 +1,4 @@
-# app/services/export_service.rb
+
 require 'csv'
 
 class ExportService
@@ -16,12 +16,11 @@ class ExportService
     raise "Tipo desconocido: #{@type}" unless @klass
   end
 
-  # Devuelve un string CSV
   def call
-    # Especificamos explícitamente el separador y otras opciones
+
     CSV.generate(
   headers: true, 
-  col_sep: ';',           # Punto y coma en lugar de coma
+  col_sep: ';',          
   row_sep: "\r\n",
   quote_char: '"',
   force_quotes: false
@@ -81,14 +80,14 @@ class ExportService
     end
   end
 
-  # Método para limpiar y sanitizar los campos
+
   def sanitize_field(field)
     return "" if field.nil?
     
-    # Convertir a string, limpiar espacios y eliminar caracteres problemáticos
+
     sanitized = field.to_s.strip
     
-    # Reemplazar saltos de línea y tabulaciones que pueden romper el CSV
+
     sanitized.gsub(/[\r\n\t]/, ' ')
   end
 end

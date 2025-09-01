@@ -1,9 +1,14 @@
 class BrandsController < ApplicationController
-  def index
-    @brands = Brand.all
-  end
 
-def import
+  def index
+  @brands = Brand.all
+  respond_to do |format|
+    format.html { render :index }
+    format.json { render json: @brands }
+  end
+end
+
+  def import
     if params[:file].present?
       BrandImportService.new(params[:file]).call
       redirect_to brands_path, notice: "Marcas importadas correctamente."

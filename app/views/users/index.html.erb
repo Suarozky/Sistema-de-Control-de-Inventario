@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          animation: {
+            'fadeIn': 'fadeIn 0.3s ease-in-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <%= javascript_include_tag 'user-manager', 'data-turbo-track': 'reload' %>
+</head>
+<body class="m-0 font-sans bg-gray-100 w-full">
+  <div class="flex gap-5 h-screen w-full md:flex-row max-md:flex-col">
+   
+
+    <div class="flex-1 flex flex-col gap-5 overflow-hidden w-full">
+      <!-- Topbar -->
+      <div class="bg-white border w-[97%] border-gray-200 rounded-lg flex items-center justify-between p-5 shadow-sm">
+       <div class="flex flex-wrap gap-4 items-center w-full max-md:flex-col max-md:items-stretch">
+
+  <div class="flex flex-col gap-1 flex-1 min-w-0 ">
+    <label class="text-xs text-gray-600 font-medium">Buscar por nombre/apellido</label>
+    <input type="text" id="user-search" class="px-4 py-2.5 border-2 border-gray-200 rounded-md text-sm transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="Ingresa nombre o apellido...">
+  </div>
+
+ 
+  <button class="px-4 py-2 bg-gray-500 text-white rounded-md text-xs hover:bg-gray-600 transition-colors duration-200" onclick="clearAllFilters()">
+    Limpiar
+  </button>
+
+
+  <form action="/users/import" method="post" enctype="multipart/form-data" class="flex gap-2 items-end">
+    <%= csrf_meta_tags %>
+    <div class="flex flex-col gap-1">
+      <label class="text-xs text-gray-600 font-medium">Importar archivo</label>
+      <input type="file" name="file" required class="border-2 border-dashed border-gray-300 rounded-md bg-gray-50 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+    </div>
+    <button type="submit" class="bg-blue-500 text-white border-none px-4 py-2.5 rounded-md cursor-pointer text-xs font-medium transition-all duration-200 hover:bg-blue-600 whitespace-nowrap">
+      Importar
+    </button>
+   <% if policy(User).create? %>
+    <a href="/users/new" class="bg-green-500 text-white border-none px-4 py-2.5 rounded-md cursor-pointer text-xs font-medium transition-all duration-200 hover:bg-green-600 whitespace-nowrap">Crear</a>
+    <% end %>
+  </form>
+    
+  <button id="download-btn" class="bg-blue-500 text-white border-none mt-5 px-4 py-2.5 rounded-md cursor-pointer text-xs font-medium transition-all duration-200 hover:bg-green-600 whitespace-nowrap">
+    Exportar
+  </button>
+</div>
+      </div>
+
+
+      <div class="flex justify-between items-center w-[97%] py-2.5 text-gray-600 text-sm border-b border-gray-200 mb-4">
+        <span id="results-count">Mostrando todos los resultados</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs">Usuarios por página:</span>
+          <select id="items-per-page" class="px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:border-blue-500">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+
+
+      <div id="users" class="flex flex-col w-[97%] gap-2.5 overflow-y-auto flex-1 pr-2 animate-fadeIn">
+        <div class="bg-white border border-gray-200 rounded-lg p-4 transition-all duration-200 mb-2.5 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-100">
+          Listado de Usuarios
+        </div>
+        <%= render partial: "shared/cardUser", collection: @users, as: :user %>
+      </div>
+
+ 
+      <div id="pagination-controls" class="flex justify-center items-center gap-2 py-4 w-[97%] bg-white border border-gray-200 rounded-lg shadow-sm">
+        <button id="prev-page" class="px-3 py-2 text-sm bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          ← Anterior
+        </button>
+        
+        <div id="page-numbers" class="flex gap-1">
+          <!-- Los números de página se generarán dinámicamente -->
+        </div>
+        
+        <button id="next-page" class="px-3 py-2 text-sm bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente →
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
