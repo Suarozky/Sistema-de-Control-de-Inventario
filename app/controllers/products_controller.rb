@@ -79,9 +79,9 @@ end
 
 # En ProductsController
 def export
-  type = params[:type] || "product"  # Default a "product" si no se especifica type
+  type = params[:type] || "product"  
   
-  # Validar que el type sea uno de los permitidos
+  # Valida
   allowed_types = ["product", "brand", "model"]
   unless allowed_types.include?(type)
     redirect_to products_path, alert: "Tipo de exportación no válido: #{type}"

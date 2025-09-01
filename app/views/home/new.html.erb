@@ -192,19 +192,6 @@
       });
     });
 
-    // Simular actualización de datos
-    function updateStats() {
-      const statsElements = document.querySelectorAll('.text-3xl.font-bold.text-gray-900');
-      statsElements.forEach(element => {
-        const currentValue = parseInt(element.textContent);
-        if (!isNaN(currentValue)) {
-          const variation = Math.floor(Math.random() * 3) - 1;
-          const newValue = Math.max(0, currentValue + variation);
-          element.textContent = newValue;
-        }
-      });
-    }
-
     // Actualizar cada 45 segundos
     setInterval(updateStats, 45000);
   </script>

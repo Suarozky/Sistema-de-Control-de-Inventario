@@ -1,7 +1,7 @@
 class TransactionsController < ApplicationController
   before_action :set_transaction, only: [:show, :edit, :update, :destroy]
 
-  # GET /transactions
+
   def index
     @transactions_count = Transaction.count
     @latest_transactions = Transaction
@@ -10,18 +10,16 @@ class TransactionsController < ApplicationController
                              .limit(10)
   end
 
-  # GET /transactions/:id
   def show
   end
 
-  # GET /transactions/new
   def new
     @transaction = Transaction.new
     @products = Product.all
     @users = User.all
   end
 
-  # POST /transactions
+
   def create
     @transaction = Transaction.new(transaction_params)
     if @transaction.save
@@ -33,13 +31,13 @@ class TransactionsController < ApplicationController
     end
   end
 
-  # GET /transactions/:id/edit
+
   def edit
     @products = Product.all
     @users = User.all
   end
 
-  # PATCH/PUT /transactions/:id
+
   def update
     if @transaction.update(transaction_params)
       redirect_to @transaction, notice: 'Transacción actualizada exitosamente.'
@@ -50,19 +48,19 @@ class TransactionsController < ApplicationController
     end
   end
 
-  # DELETE /transactions/:id
+
   def destroy
     @transaction.destroy
     redirect_to transactions_path, notice: 'Transacción eliminada.'
   end
 
-  # Endpoint API para el count
+
   def count
     @transactions_count = Transaction.count
     render json: { total_transactions: @transactions_count }
   end
 
-  # POST /transactions/import
+
   def import
     unless params[:file].present?
       redirect_to transactions_path, alert: "Por favor sube un archivo."
@@ -90,7 +88,7 @@ class TransactionsController < ApplicationController
     end
   end
 
-  # GET /transactions/export
+
 def export
   csv_data = ExportService.new("transaction").call
   filename = "transactions_#{Time.current.strftime('%Y%m%d%H%M%S')}.csv"
