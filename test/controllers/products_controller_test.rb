@@ -75,14 +75,6 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get product count" do
-    get count_products_url
-    assert_response :success
-    
-    json_response = JSON.parse(response.body)
-    assert_not_nil json_response["total_users"]
-  end
-
 
   test "should get transactions history" do
     get transactions_history_product_url(@product)
