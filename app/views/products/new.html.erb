@@ -26,6 +26,17 @@
             </div>
 
             <div class="space-y-2">
+                <label for="product_owner" class="block text-sm font-medium text-gray-700">Propietario</label>
+                <select id="product_owner" name="product[ownerid]"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    <option value="">Selecciona un propietario</option>
+                    <% @users.each do |user| %>
+                        <option value="<%= user.id %>"><%= user.name %> <%= user.lastname %></option>
+                    <% end %>
+                </select>
+            </div>
+
+            <div class="space-y-2">
                 <label for="product_brand" class="block text-sm font-medium text-gray-700">Marca</label>
                 <select id="product_brand" name="product[brand]"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">

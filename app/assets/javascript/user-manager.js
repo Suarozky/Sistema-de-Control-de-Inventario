@@ -1,5 +1,5 @@
 // app/javascript/user-manager.js
-import { BaseManager } from './base-manager.js';
+// Dependencia: base-manager.js debe cargarse antes
 
 class UserManager extends BaseManager {
   constructor() {
@@ -8,7 +8,7 @@ class UserManager extends BaseManager {
         userSearch: ''
       },
       containerSelector: '#users',
-      itemSelector: '> div',
+      itemSelector: '.card',
       exportUrl: '/users/export?type=user'
     });
     this.init();
@@ -20,9 +20,8 @@ class UserManager extends BaseManager {
   }
 
   loadItems() {
-    // Obtener todos los elementos div dentro de #users (excluyendo el título)
-    this.allItems = Array.from(document.querySelectorAll('#users > div'))
-      .filter(el => !el.textContent.includes('Listado de Usuarios'));
+    // Obtener todos los elementos .card dentro de #users
+    this.allItems = Array.from(document.querySelectorAll('#users .card'));
     this.filteredItems = [...this.allItems];
     console.log('👥 Usuarios cargados:', this.allItems.length);
   }
@@ -88,5 +87,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Exportar para uso en módulos (si usas importmap)
-export { UserManager };
+// UserManager está disponible globalmente

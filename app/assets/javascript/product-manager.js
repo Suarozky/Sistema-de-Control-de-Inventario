@@ -1,5 +1,5 @@
 // app/javascript/product-manager.js
-import { BaseManager } from './base-manager.js';
+// Dependencia: base-manager.js debe cargarse antes
 
 class ProductManager extends BaseManager {
   constructor() {
@@ -169,5 +169,4 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('✅ Product Manager con paginación inicializado');
 });
 
-// Exportar para uso en módulos
-export { ProductManager, clearAllFilters };
+// ProductManager está disponible globalmente

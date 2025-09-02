@@ -9,15 +9,15 @@ class SessionsController < ApplicationController
     
     if user
       session[:user_id] = user.id
-      redirect_to home_path, notice: 'Sesión iniciada correctamente' # <-- aquí
+      redirect_to home_index_path, notice: 'Sesión iniciada correctamente' 
     else
       flash.now[:alert] = 'Usuario no encontrado'
-      render :new
+      redirect_to login_path, alert: 'Usuario no encontrado'
     end
   end
 
   def destroy
-    session[:user_id] = nil
+    reset_session
     redirect_to login_path, notice: 'Sesión cerrada'
   end
 

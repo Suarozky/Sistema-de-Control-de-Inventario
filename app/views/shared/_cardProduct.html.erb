@@ -58,10 +58,8 @@
       </button>
       <% end %>
       
-      <button class="history-btn px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px" 
-              onclick="window.location.href='<%= transactions_history_product_path(product) %>'">
-        Detalles
-      </button>
+      <%= link_to "Detalles", product_path(product), 
+    class: "history-btn px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px inline-block text-center no-underline" %>
 
       <button class="save-btn px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md transition-all duration-200 hover:bg-blue-600 hover:-translate-y-px" 
               style="display:none;">

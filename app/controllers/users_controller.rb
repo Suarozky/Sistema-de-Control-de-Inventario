@@ -1,18 +1,13 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:my_products]
+   before_action :authenticate_user!
+  before_action :set_user, only: [:show]
 
   def index
-    @users = policy_scope(User)  
-    @products = Product.all
-    @models = Model.all
-    @brands = Brand.all
+    @users = policy_scope(User).order(id: :desc)
   end
 
   def new
-    @products = Product.all
     @users = User.all
-    @brands = Brand.all
-    @models = Model.all
     render layout: "minimal"
   end
 
@@ -22,19 +17,10 @@ class UsersController < ApplicationController
     authorize @user
 
     if @user.save
-      redirect_to home_path, notice: "Usuario creado con éxito"
+      redirect_to home_index_path, notice: "Usuario creado con éxito"
     else
-      @products = Product.all
-      @users = User.all
-      @brands = Brand.all
-      @models = Model.all
-      render :new, status: :unprocessable_content, layout: "minimal"
+      render :index, status: :unprocessable_content, layout: "minimal"
     end
-  end
-
-  def count
-    @users_count = User.count
-    render json: { total_users: @users_count }
   end
 
   def import
@@ -49,18 +35,18 @@ class UsersController < ApplicationController
       if result[:errors].empty?
         message = "#{result[:success_count]} usuarios importados correctamente."
         message += " #{result[:skipped_count]} usuarios ya existían." if result[:skipped_count] > 0
-        redirect_to home_path, notice: message
+        redirect_to home_index_path, notice: message
       else
         error_message = "Se procesaron #{result[:success_count]} usuarios correctamente"
         error_message += ", #{result[:skipped_count]} ya existían" if result[:skipped_count] > 0
         error_message += ". Errores: #{result[:errors].join('; ')}"
-        redirect_to home_path, alert: error_message
+        redirect_to home_index_path, alert: error_message
       end
       
     rescue => e
       Rails.logger.error "Error en import de usuarios: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
-      redirect_to home_path, alert: "Error al importar: #{e.message}"
+      redirect_to home_index_path, alert: "Error al importar: #{e.message}"
     end
   end
 
@@ -74,19 +60,18 @@ class UsersController < ApplicationController
       disposition: "attachment"
   end
 
-  def my_products
-    # Obtener todos los productos que han tenido transacciones con este usuario
+  def show
+
     @products = Product.joins(:transactions)
                        .where(transactions: { ownerid: @user.id })
                        .distinct
                        .includes(:transactions)
     
-    # Separar productos actuales y anteriores
     @current_products = []
     @previous_products = []
     
     @products.each do |product|
-      # Obtener la transacción más reciente del producto
+     
       latest_transaction = product.transactions.order(date: :desc).first
       
       if latest_transaction.ownerid == @user.id

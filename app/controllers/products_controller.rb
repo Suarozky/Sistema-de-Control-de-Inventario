@@ -1,10 +1,11 @@
 # app/controllers/products_controller.rb
 class ProductsController < ApplicationController
-  before_action :set_product, only: [:update, :transactions_history]
+   before_action :authenticate_user!
+  before_action :set_product, only: [:update, :show]
 
   # GET /products
   def index
-      @products = policy_scope(Product)  
+    @products = policy_scope(Product).order(id: :desc)  
     @users = User.all
     @models = Model.all
     @brands = Brand.all
@@ -13,7 +14,6 @@ class ProductsController < ApplicationController
 
   # GET /products/new
   def new
-    @products = Product.all
     @users = User.all
     @brands = Brand.all
     @models = Model.all
@@ -30,14 +30,9 @@ class ProductsController < ApplicationController
     authorize @product
     
     if @product.save
-      redirect_to home_path, notice: "Producto creado correctamente."
+      redirect_to home_index_path, notice: "Producto creado correctamente."
     else
-      # Cargar las variables necesarias para la vista new
-      @products = Product.all
-      @users = User.all
-      @brands = Brand.all
-      @models = Model.all
-      render :new, status: :unprocessable_content
+      render :index, status: :unprocessable_content
     end
   end
 
@@ -106,8 +101,8 @@ class ProductsController < ApplicationController
     end
   end
 
-  # GET /products/:id/transactions_history
-  def transactions_history
+
+  def show 
     @transactions = Transaction.where(productid: @product.id).order(date: :desc)
     render layout: "minimal"
   end

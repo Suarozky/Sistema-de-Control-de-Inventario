@@ -5,23 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          animation: {
-            'fadeIn': 'fadeIn 0.3s ease-in-out',
-          },
-          keyframes: {
-            fadeIn: {
-              '0%': { opacity: '0', transform: 'translateY(10px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            }
-          }
-        }
-      }
-    }
-  </script>
   
   <%= javascript_include_tag 'user-manager', 'data-turbo-track': 'reload' %>
 </head>
@@ -59,9 +42,9 @@
     <% end %>
   </form>
     
-  <button id="download-btn" class="bg-blue-500 text-white border-none mt-5 px-4 py-2.5 rounded-md cursor-pointer text-xs font-medium transition-all duration-200 hover:bg-green-600 whitespace-nowrap">
-    Exportar
-  </button>
+  <a href="/users/export?type=user" class="bg-blue-500 text-white border-none mt-5 px-4 py-2.5 rounded-md cursor-pointer text-xs font-medium transition-all duration-200 hover:bg-blue-600 whitespace-nowrap">
+            Exportar
+          </a>
 </div>
       </div>
 
