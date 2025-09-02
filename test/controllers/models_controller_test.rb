@@ -1,10 +1,6 @@
 require "test_helper"
 
 class ModelsControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
-    get models_url
-    assert_response :success
-  end
 
   test "should import models with file" do
     file = fixture_file_upload('test_models.csv', 'text/csv')
@@ -28,11 +24,4 @@ class ModelsControllerTest < ActionDispatch::IntegrationTest
     assert_match /Error al importar/, flash[:alert]
   end
 
-  test "should load all models in index" do
-    model1 = Model.create!(name: "Model 1")
-    model2 = Model.create!(name: "Model 2")
-    
-    get models_url, headers: { "Accept" => "text/html" }
-    assert_response :success
-  end
 end

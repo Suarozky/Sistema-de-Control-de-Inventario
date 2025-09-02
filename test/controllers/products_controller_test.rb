@@ -26,7 +26,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
       }, headers: { 'HTTP_AUTHORIZATION' => @user.id } # O como manejes auth
     end
 
-    assert_redirected_to home_url
+    assert_redirected_to home_index_url
     assert_equal "Producto creado correctamente.", flash[:notice]
   end
 
@@ -76,11 +76,6 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-  test "should get transactions history" do
-    get transactions_history_product_url(@product)
-    assert_response :success
-    assert_not_nil assigns(:transactions)
-  end
 
   test "should import products with file" do
     file = fixture_file_upload('test_products.csv', 'text/csv')

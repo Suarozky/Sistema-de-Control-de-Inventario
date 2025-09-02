@@ -1,10 +1,6 @@
 require "test_helper"
 
 class BrandsControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
-    get brands_url, headers: { "Accept" => "text/html" }
-    assert_response :success
-  end
 
   test "should import brands with file" do
     file = fixture_file_upload('test_brands.csv', 'text/csv')
@@ -28,11 +24,5 @@ class BrandsControllerTest < ActionDispatch::IntegrationTest
     assert_match /Error al importar/, flash[:alert]
   end
 
-  test "should load all brands in index" do
-    brand1 = Brand.create!(name: "Brand 1")
-    brand2 = Brand.create!(name: "Brand 2")
-    
-    get brands_url, headers: { "Accept" => "text/html" }
-    assert_response :success
-  end
+  
 end

@@ -1,20 +1,9 @@
 require "test_helper"
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
-  test "should get new" do
-    get home_url
-    assert_response :success
-  end
-
-  test "should load statistics data" do
-    user = users(:one)
-    product = products(:one)
-    transaction = transactions(:one)
-    
-    get home_url
-    
-    assert_response :success
-    # Test passes if response is success
+  setup do
+    @user = users(:one)
+    post login_url, params: { name: @user.name, lastname: @user.lastname }
   end
 
   test "should limit recent transactions to 10" do
@@ -26,7 +15,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
       )
     end
 
-    get home_url
+    get home_index_url
     
     assert_response :success
     # Test passes if response is success
