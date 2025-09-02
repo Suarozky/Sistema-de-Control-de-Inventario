@@ -1,11 +1,8 @@
-<div class="w-64 bg-white border-r border-gray-100 px-6 py-8 flex flex-col shadow-sm min-h-screen
+<div class="w-64 bg-white border-r border-gray-100 px-6 py-10 flex flex-col shadow-sm min-h-screen
             max-md:w-full max-md:h-auto max-md:flex-row max-md:justify-around max-md:px-4 max-md:py-4 max-md:min-h-0">
 
   <div class="flex flex-col items-center mb-8 max-md:mb-0 max-md:flex-row max-md:items-center max-md:gap-3">
     <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full p-0.5 shadow-lg max-md:w-12 max-md:h-12">
-      <img src="https://i.pinimg.com/736x/5f/d8/44/5fd8442c22a11d710b7d2fc7166f1ec8.jpg" 
-           alt="Profile" 
-           class="w-full h-full object-cover rounded-full border-2 border-white">
     </div>
     <div class="mt-3 text-center max-md:mt-0 max-md:text-left max-md:hidden">
       <% if policy(Product).create? %>
@@ -17,44 +14,50 @@
     </div>
   </div>
 
-  <nav class="flex flex-col gap-2 w-full max-md:flex-row max-md:gap-4">
-    <%= link_to home_path, class: "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700  group max-md:flex-col max-md:gap-1 max-md:px-2 max-md:py-2" do %>
-      <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center  max-md:w-6 max-md:h-6">
-        <svg class="w-4 h-4 text-blue-600 max-md:w-3 max-md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-        </svg>
-      </div>
-      <span class="font-medium max-md:text-xs">Home</span>
-    <% end %>
+<%
+  nav_items = [
+    { 
+      path: home_index_path, 
+      label: 'Home',
+      icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>'
+    },
+    { 
+      path: users_path, 
+      label: 'Usuarios',
+      icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path></svg>'
+    },
+    { 
+      path: products_path, 
+      label: 'Productos',
+      icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>'
+    }
+  ]
 
-    <%= link_to users_path, class: "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700  transition-all duration-200 group max-md:flex-col max-md:gap-1 max-md:px-2 max-md:py-2" do %>
-      <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center  max-md:w-6 max-md:h-6">
-        <svg class="w-4 h-4 text-blue-600 max-md:w-3 max-md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-        </svg>
-      </div>
-      <span class="font-medium max-md:text-xs">Usuarios</span>
-    <% end %>
+  # Clase unificada para todos los elementos
+  nav_class = "flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 group max-md:flex-col max-md:gap-1 max-md:px-2 max-md:py-2 transform hover:scale-105 hover:shadow-md"
+%>
 
-    <%= link_to products_path, class: "flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700  transition-all duration-200 group max-md:flex-col max-md:gap-1 max-md:px-2 max-md:py-2" do %>
-      <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center  max-md:w-6 max-md:h-6">
-        <svg class="w-4 h-4 text-blue-600 max-md:w-3 max-md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-        </svg>
+<nav class="space-y-2">
+  <% nav_items.each do |item| %>
+    <%= link_to item[:path], class: nav_class do %>
+      <div class="flex items-center gap-3 max-md:flex-col max-md:gap-1">
+        <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-white group-hover:shadow-sm transition-all duration-300">
+          <%= raw item[:icon] %>
+        </div>
+        <span class="font-medium text-sm max-md:text-xs max-md:text-center"><%= item[:label] %></span>
       </div>
-      <span class="font-medium max-md:text-xs">Productos</span>
     <% end %>
-  </nav>
-
+  <% end %>
+</nav>
   <!-- Logout Button - VERSIÓN CON BUTTON_TO (más robusta) -->
-  <div class="mt-auto pt-6 border-t border-gray-200 max-md:hidden">
+  <div class="mt-auto border-t border-gray-200 max-md:hidden">
     <%= button_to logout_path, 
         method: :delete,
         class: "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 group border-0 bg-transparent cursor-pointer",
         data: { 
           confirm: "¿Estás seguro que deseas cerrar sesión?" 
         } do %>
-      <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200">
+      <div class="w-4 h-4 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200">
         <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
         </svg>

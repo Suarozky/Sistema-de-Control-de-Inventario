@@ -1,21 +1,21 @@
 class ProductPolicy < ApplicationPolicy
 
   def update?
-    user&.admin? # Manejo seguro de nil
+    user&.admin? 
   end
 
   def create?
-    user&.admin? # Cambiado: agregado & para manejo seguro de nil
+    user&.admin? 
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user&.admin? # Cambiado: agregado & para manejo seguro de nil
+      if user&.admin?
         scope.all
-      elsif user # Verificar que user no sea nil antes de acceder a .id
+      elsif user 
         scope.where(ownerid: user.id)
       else
-        scope.none # Si no hay usuario, no mostrar nada
+        scope.none 
       end
     end
   end

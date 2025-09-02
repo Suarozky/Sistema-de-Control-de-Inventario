@@ -6,8 +6,6 @@ Rails.application.routes.draw do
   post   "/login",  to: "sessions#create"
   delete "/logout", to: "sessions#destroy"
 
-  get "/home", to: "home#new"
-
   # API v1
   namespace :api do
     namespace :v1 do
@@ -23,10 +21,10 @@ Rails.application.routes.draw do
       get  :count        
       get  :export      
     end
-    member do
-      get :my_products   
-    end
+
   end
+
+  resources :home, only: [:index]
 
   resources :products do
     collection do
@@ -34,9 +32,7 @@ Rails.application.routes.draw do
       get :count
       get :export
     end
-    member do
-      get :transactions_history
-    end
+
   end
 
   resources :transactions do

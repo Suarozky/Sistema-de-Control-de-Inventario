@@ -10,47 +10,32 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-
     <!-- CSS -->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-
     <!-- JS -->
     <%= javascript_importmap_tags %>
+    <%= javascript_include_tag 'base-manager', 'data-turbo-track': 'reload' %>
     <%= javascript_include_tag 'product-modal-utils', 'data-turbo-track': 'reload' %>
     <%= javascript_include_tag 'product-cards', 'data-turbo-track': 'reload' %>
   </head>
-
   <body class="bg-gray-50 flex min-h-screen">
     <%= render "shared/sidebar" %> <!-- Sidebar siempre incluido -->
-
     <%= render "shared/confirmation_modal" %>
-
     <!-- Contenido principal -->
     <div class="flex-1 flex flex-col">
-      <% if content_for?(:header) %>
-        <header class="bg-white shadow p-4">
-          <%= yield :header %>
-        </header>
+      <main class="flex-1 w-full p-2">
+       <% flash.each do |type, message| %>
+        <div class="rounded-md <%= flash_class(type) %> mb-4 transition-opacity duration-500" 
+             onload="setTimeout(() => { this.style.opacity='0'; setTimeout(() => this.remove(), 500); }, 2000)">
+          <%= message %>
+        </div>
       <% end %>
 
-      <main class="flex-1 w-full p-5">
-        <% flash.each do |type, message| %>
-          <div class="rounded-md <%= flash_class(type) %>">
-            <%= message %>
-          </div>
-        <% end %>
         <%= yield %>
       </main>
-
-      <% if content_for?(:footer) %>
-        <footer class="mt-auto p-4 bg-white border-t">
-          <%= yield :footer %>
-        </footer>
-      <% end %>
     </div>
   </body>
 </html>

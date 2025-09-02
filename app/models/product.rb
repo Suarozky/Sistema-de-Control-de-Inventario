@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  belongs_to :owner, class_name: "User", foreign_key: "ownerid", optional: true
+  belongs_to :owner, class_name: "User", foreign_key: "ownerid", optional: false
   has_many :transactions, foreign_key: :productid
 
   # Agregar validaciones

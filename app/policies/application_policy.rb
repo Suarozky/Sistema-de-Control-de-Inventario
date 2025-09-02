@@ -6,7 +6,6 @@ class ApplicationPolicy
     @record = record
   end
 
-  # Métodos básicos que deben ser implementados en las políticas hijas
   def index?
     false
   end
@@ -44,7 +43,7 @@ class ApplicationPolicy
     end
 
     def resolve
-      scope.none  # Por defecto no mostrar nada
+      scope.none  
     end
   end
 end

@@ -291,5 +291,4 @@ class BaseManager {
   }
 }
 
-// Exportar para uso en módulos
-export { BaseManager };
+// BaseManager está disponible globalmente
