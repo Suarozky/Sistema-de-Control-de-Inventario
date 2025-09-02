@@ -70,7 +70,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   end
 
   def product_params
-    params.require(:product).permit(:model, :brand, :entry_date, :ownerid, :serial, :observations)
+    params.require(:product).permit(:model, :brand, :entry_date, :ownerid)
   end
 
   def product_json(product)
@@ -79,8 +79,6 @@ class Api::V1::ProductsController < Api::V1::BaseController
       model: product.model,
       brand: product.brand,
       entry_date: product.entry_date,
-      serial: product.serial,
-      observations: product.observations,
       owner: product.owner ? {
         id: product.owner.id,
         name: product.owner.name,

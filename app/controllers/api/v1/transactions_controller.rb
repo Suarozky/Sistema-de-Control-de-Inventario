@@ -70,19 +70,17 @@ class Api::V1::TransactionsController < Api::V1::BaseController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:productid, :ownerid, :date, :observations)
+    params.require(:transaction).permit(:productid, :ownerid, :date)
   end
 
   def transaction_json(transaction)
     {
       id: transaction.id,
       date: transaction.date,
-      observations: transaction.observations,
       product: transaction.product ? {
         id: transaction.product.id,
         model: transaction.product.model,
         brand: transaction.product.brand,
-        serial: transaction.product.serial
       } : nil,
       owner: transaction.owner ? {
         id: transaction.owner.id,
