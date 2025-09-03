@@ -10,6 +10,11 @@
 5.bin/rails s
 ```
 
+```bash
+1.usuario admin de ejemplo: name:Juan Apellido:Pérez
+2.usuario user de ejemplo: name:Carlos Apellido:Ruiz
+```
+
 
 
 ## desiciones de diseño decidi hacerlo basico como cualquier app de administracion con un side bar y datos a la derecha datos en cards horizontales y filtros arriba creo que es una buena convencion 
