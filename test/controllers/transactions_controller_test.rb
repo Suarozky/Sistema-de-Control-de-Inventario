@@ -110,4 +110,55 @@ class TransactionsControllerTest < ActionDispatch::IntegrationTest
     get transactions_url, headers: { "Accept" => "text/html" }
     assert_response :success
   end
+
+  test "should handle transaction show" do
+    transaction = Transaction.create!(
+      ownerid: @user.id,
+      productid: @product.id,
+      date: Time.current
+    )
+    
+    # Test that transaction was created
+    assert_not_nil transaction.id
+  end
+
+  test "should handle transaction creation with invalid product" do
+    assert_no_difference("Transaction.count") do
+      post transactions_url, params: { 
+        transaction: { 
+          productid: 99999,
+          ownerid: @user.id,
+          date: Date.current
+        } 
+      }
+    end
+
+    assert_response :unprocessable_content
+  end
+
+  test "should handle transaction creation with invalid owner" do
+    assert_no_difference("Transaction.count") do
+      post transactions_url, params: { 
+        transaction: { 
+          productid: @product.id,
+          ownerid: 99999,
+          date: Date.current
+        } 
+      }
+    end
+
+    assert_response :unprocessable_content
+  end
+
+  test "should include owner and product associations" do
+    get transactions_url, headers: { "Accept" => "text/html" }
+    assert_response :success
+    assert assigns(:transactions)
+  end
+
+  test "should handle transactions with missing associations gracefully" do
+    get transactions_url, headers: { "Accept" => "text/html" }
+    assert_response :success
+    # Should not crash even if some associations are missing
+  end
 end

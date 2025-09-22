@@ -42,6 +42,36 @@ class ProductPolicyTest < ActiveSupport::TestCase
     refute ProductPolicy.new(nil, product).update?
   end
 
-  
+  def test_show
+    admin = users(:admin)
+    regular_user = users(:regular)
+    product = products(:one)
+    
+    # Por defecto ApplicationPolicy retorna false para show
+    refute ProductPolicy.new(admin, product).show?
+    refute ProductPolicy.new(regular_user, product).show?
+    refute ProductPolicy.new(nil, product).show?
+  end
+
+  def test_index
+    admin = users(:admin)
+    regular_user = users(:regular)
+    
+    # Por defecto ApplicationPolicy retorna false para index
+    refute ProductPolicy.new(admin, Product).index?
+    refute ProductPolicy.new(regular_user, Product).index?
+    refute ProductPolicy.new(nil, Product).index?
+  end
+
+  def test_destroy
+    admin = users(:admin)
+    regular_user = users(:regular)
+    product = products(:one)
+    
+    # Por defecto ApplicationPolicy retorna false para destroy
+    refute ProductPolicy.new(admin, product).destroy?
+    refute ProductPolicy.new(regular_user, product).destroy?
+    refute ProductPolicy.new(nil, product).destroy?
+  end
 end
 

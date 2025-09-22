@@ -1,16 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-   <%= javascript_include_tag 'product-manager', 'data-turbo-track': 'reload' %>
-</head>
-<body class="m-0 font-sans bg-gray-100 w-full ">
-  <div class="flex gap-5 h-screen w-full md:flex-row max-md:flex-col">
-    
-    <!-- Main Area -->
+<% content_for :title, "Productos" %>
+
+<%= javascript_include_tag 'product-manager', 'data-turbo-track': 'reload' %>
+
+<!-- Main Area -->
     <div class="flex-1 flex flex-col gap-5 overflow-hidden w-full">
       <!-- Topbar compacto - Manteniendo la lógica Rails original -->
       <div class="bg-white border w-[97%] border-gray-200 rounded-lg shadow-sm p-4">
@@ -141,6 +133,3 @@
         </button>
       </div>
     </div>
-  </div>
-</body>
-</html>

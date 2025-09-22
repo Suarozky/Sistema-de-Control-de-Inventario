@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <%= javascript_include_tag 'user-manager', 'data-turbo-track': 'reload' %>
-</head>
-<body class="m-0 font-sans bg-gray-100 w-full">
-  <div class="flex gap-5 h-screen w-full md:flex-row max-md:flex-col">
-   
+<% content_for :title, "Usuarios" %>
 
-    <div class="flex-1 flex flex-col gap-5 overflow-hidden w-full">
+<%= javascript_include_tag 'user-manager', 'data-turbo-track': 'reload' %>
+
+<div class="flex-1 flex flex-col gap-5 overflow-hidden w-full">
       <!-- Topbar -->
       <div class="bg-white border w-[97%] border-gray-200 rounded-lg flex items-center justify-between p-5 shadow-sm">
        <div class="flex flex-wrap gap-4 items-center w-full max-md:flex-col max-md:items-stretch">
@@ -84,6 +74,3 @@
         </button>
       </div>
     </div>
-  </div>
-</body>
-</html>

@@ -102,4 +102,44 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to products_url
     assert_match /Tipo de exportación no válido/, flash[:alert]
   end
+
+  test "should get index" do
+    get products_url
+    assert_response :success
+  end
+
+  test "should get new" do
+    get new_product_url
+    assert_response :success
+  end
+
+  test "should show product" do
+    get product_url(@product)
+    assert_response :success
+  end
+
+  test "should handle product update with owner change" do
+    new_owner = User.create!(name: "NewOwner", lastname: "Test")
+    
+    patch product_url(@product), params: { 
+      product: { 
+        model: @product.model,
+        brand: @product.brand,
+        ownerid: new_owner.id
+      }
+    }
+    
+    assert_response :success
+    @product.reload
+    assert_equal new_owner.id, @product.ownerid
+  end
+
+  test "should handle missing file gracefully" do
+    assert_no_difference("Product.count") do
+      post import_products_url, params: {}
+    end
+    
+    assert_redirected_to products_url
+    assert_equal "Por favor sube un archivo.", flash[:alert]
+  end
 end

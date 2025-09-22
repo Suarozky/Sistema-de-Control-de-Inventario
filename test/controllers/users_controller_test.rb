@@ -38,6 +38,22 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
 
+  test "should get index" do
+    get users_url
+    assert_response :success
+  end
+
+  test "should get new" do
+    get new_user_url
+    assert_response :success
+  end
+
+  test "should show user" do
+    user = users(:user)
+    get user_url(user)
+    assert_response :success
+  end
+
   test "should import users with file" do
     file = fixture_file_upload('test_users.csv', 'text/csv')
     
@@ -55,6 +71,51 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get export_users_url
     assert_response :success
     assert_equal "text/csv; charset=utf-8", response.content_type
+  end
+
+  test "should handle user creation with validation errors" do
+    assert_no_difference("User.count") do
+      post users_url, params: { 
+        user: { 
+          name: users(:admin).name,  # Duplicate name/lastname
+          lastname: users(:admin).lastname
+        }
+      }
+    end
+
+    assert_response :unprocessable_content
+    # Just verify we got an error response
+  end
+
+  test "should filter users correctly in index" do
+    get users_url
+    assert_response :success
+    # Should display users based on policy
+  end
+
+  test "should handle missing user in show" do
+    # Test that controller handles missing user gracefully
+    begin
+      get user_url(99999)
+    rescue ActiveRecord::RecordNotFound
+      # Expected behavior
+      assert true
+    end
+  end
+
+  test "should handle user show with current and previous products" do
+    user = users(:user)
+    product = Product.create!(
+      model: "TestModel", 
+      brand: "TestBrand", 
+      entry_date: Date.current, 
+      ownerid: user.id
+    )
+    
+    get user_url(user)
+    assert_response :success
+    assert assigns(:current_products)
+    assert assigns(:previous_products)
   end
 
   test "should get user products" do

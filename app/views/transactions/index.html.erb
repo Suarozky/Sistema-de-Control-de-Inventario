@@ -1,5 +1,7 @@
 
-    <h1>Transacciones</h1>
-    <% @transactions.each do |transaction| %>
-      <p><%= transaction.id %>: <%= transaction.ownerid %></p>
-    <% end %>
+<% content_for :title, "Transacciones" %>
+
+<h1>Transacciones</h1>
+<% @transactions.each do |transaction| %>
+  <p><%= transaction.id %>: <%= transaction.ownerid %></p>
+<% end %>

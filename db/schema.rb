@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_01_182457) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_191943) do
   create_table "brands", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -30,6 +30,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_182457) do
     t.integer "ownerid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["ownerid"], name: "index_products_on_ownerid"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -38,6 +39,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_182457) do
     t.datetime "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["ownerid"], name: "index_transactions_on_ownerid"
+    t.index ["productid"], name: "index_transactions_on_productid"
   end
 
   create_table "users", force: :cascade do |t|
@@ -48,4 +51,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_182457) do
     t.datetime "updated_at", null: false
     t.index ["name", "lastname"], name: "index_users_on_name_and_lastname", unique: true
   end
+
+  add_foreign_key "products", "users", column: "ownerid"
+  add_foreign_key "transactions", "products", column: "productid"
+  add_foreign_key "transactions", "users", column: "ownerid"
 end

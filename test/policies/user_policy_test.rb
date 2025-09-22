@@ -29,5 +29,39 @@ class UserPolicyTest < ActiveSupport::TestCase
     refute UserPolicy.new(nil, User.new).create?
   end
 
+  def test_scope_with_nil_user
+    scope = Pundit.policy_scope(nil, User)
+    assert_equal 0, scope.count
+  end
+
+  def test_policy_initialization
+    admin = users(:admin)
+    user = users(:regular)
+    policy = UserPolicy.new(admin, user)
+    
+    assert_equal admin, policy.user
+    assert_equal user, policy.record
+  end
+
+  def test_show_permissions
+    admin = users(:admin)
+    regular_user = users(:regular)
+    
+    # Test default behavior from ApplicationPolicy
+    refute UserPolicy.new(admin, regular_user).show?
+    refute UserPolicy.new(regular_user, admin).show?
+    refute UserPolicy.new(nil, regular_user).show?
+  end
+
+  def test_update_permissions
+    admin = users(:admin)
+    regular_user = users(:regular)
+    
+    # UserPolicy inherits from ApplicationPolicy which defaults to false for update
+    refute UserPolicy.new(admin, regular_user).update?
+    refute UserPolicy.new(regular_user, admin).update?
+    refute UserPolicy.new(nil, regular_user).update?
+  end
+
 end
 
