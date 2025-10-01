@@ -17,7 +17,7 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-gem "roo", "~> 2.10"
+gem "roo", "~> 3.0"
 # Gemfile
 gem 'caxlsx'
 gem "rails-controller-testing"
